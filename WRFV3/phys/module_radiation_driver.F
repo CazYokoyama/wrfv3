@@ -141,7 +141,7 @@ CONTAINS
    USE module_ra_rrtmg_lw   , ONLY : rrtmg_lwrad
    USE module_ra_rrtmg_sw   , ONLY : rrtmg_swrad
    USE module_ra_cam        , ONLY : camrad
-   USE module_ra_gfdleta    , ONLY : etara
+   USE module_ra_gfdleta    , ONLY : etara,etacloudfraction,etacloudcoverinit
 #ifdef HWRF
    USE module_ra_hwrf
 #endif
@@ -820,12 +820,30 @@ CONTAINS
           PRESENT(F_QC) .AND. PRESENT ( F_QI ) ) THEN
 ! Call to cloud fraction routine based on Randall 1994 (Hong Pan 1998)
 
-   CALL cal_cldfra2(CLDFRA,qv,qc,qi,qs,                     &
-                   F_QV,F_QC,F_QI,F_QS,t,p,                &
-                   F_ICE_PHY,F_RAIN_PHY,                   &
-                   ids,ide, jds,jde, kds,kde,              &
-                   ims,ime, jms,jme, kms,kme,              &
-                   its,ite, jts,jte, kts,kte               )
+        CALL ETACLOUDFRACTION(                                      &
+                  DT=dt                                             &
+                 ,P8W=p8w,DZ8W=dz8w,RHO_PHY=rho,P_PHY=p,T=t         &
+                 ,QV=qv,QW=qc_temp,QI=qi,QS=qs                      &
+                 ,CLDFRA=CLDFRA                                     &
+                 ,HTOP=htop,HBOT=hbot                               &
+                 ,HBOTR=hbotr, HTOPR=htopr                          &
+                 ,CUPPT=cuppt                                       &
+                 ,G=g,NSTEPRA=stepra                                &
+                 ,CFRACL=cfracl,CFRACM=cfracm,CFRACH=cfrach         &
+                 ,ACFRST=acfrst,NCFRST=ncfrst                       &
+                 ,ACFRCV=acfrcv,NCFRCV=ncfrcv                       &
+                 ,IDS=ids,IDE=ide, JDS=jds,JDE=jde, KDS=kds,KDE=kde &     
+                 ,IMS=ims,IME=ime, JMS=jms,JME=jme, KMS=kms,KME=kme &
+                 ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte )
+
+
+
+!   CALL cal_cldfra2(CLDFRA,qv,qc,qi,qs,                     &
+!                   F_QV,F_QC,F_QI,F_QS,t,p,                &
+!                   F_ICE_PHY,F_RAIN_PHY,                   &
+!                   ids,ide, jds,jde, kds,kde,              &
+!                   ims,ime, jms,jme, kms,kme,              &
+!                   its,ite, jts,jte, kts,kte               )
 
      ENDIF
 
@@ -834,13 +852,30 @@ CONTAINS
      IF ( PRESENT ( CLDFRA ) .AND.                           &
           PRESENT(F_QC) .AND. PRESENT ( F_QI ) ) THEN
 ! Call to cloud fraction routine based on Randall 1994 (Hong Pan 1998)
+!JACK - ADD call to etacloudfraction calc to produce layer-avg cloudiness & replace original binary CLDFRA
+        CALL ETACLOUDFRACTION(                                      &
+                  DT=dt                                             &
+                 ,P8W=p8w,DZ8W=dz8w,RHO_PHY=rho,P_PHY=p,T=t         &
+                 ,QV=qv,QW=qc_temp,QI=qi,QS=qs                      &
+                 ,CLDFRA=CLDFRA                                     &
+                 ,HTOP=htop,HBOT=hbot                               &
+                 ,HBOTR=hbotr, HTOPR=htopr                          &
+                 ,CUPPT=cuppt                                       &
+                 ,G=g,NSTEPRA=stepra                                &
+                 ,CFRACL=cfracl,CFRACM=cfracm,CFRACH=cfrach         &
+                 ,ACFRST=acfrst,NCFRST=ncfrst                       &
+                 ,ACFRCV=acfrcv,NCFRCV=ncfrcv                       &
+                 ,IDS=ids,IDE=ide, JDS=jds,JDE=jde, KDS=kds,KDE=kde &     
+                 ,IMS=ims,IME=ime, JMS=jms,JME=jme, KMS=kms,KME=kme &
+                 ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte )
 
-        CALL cal_cldfra2(CLDFRA,qv,qc,qi,qs,               &
-                   F_QV,F_QC,F_QI,F_QS,t,p,                &
-                   F_ICE_PHY,F_RAIN_PHY,                   &
-                   ids,ide, jds,jde, kds,kde,              &
-                   ims,ime, jms,jme, kms,kme,              &
-                   its,ite, jts,jte, kts,kte               )
+
+!        CALL cal_cldfra2(CLDFRA,qv,qc,qi,qs,               &
+!                   F_QV,F_QC,F_QI,F_QS,t,p,                &
+!                   F_ICE_PHY,F_RAIN_PHY,                   &
+!                   ids,ide, jds,jde, kds,kde,              &
+!                   ims,ime, jms,jme, kms,kme,              &
+!                   its,ite, jts,jte, kts,kte               )
 
      ENDIF
  
@@ -848,10 +883,23 @@ CONTAINS
 
      IF ( PRESENT ( CLDFRA ) .AND.                           &
           PRESENT(F_QC) .AND. PRESENT ( F_QI ) ) THEN
-       CALL cal_cldfra(CLDFRA,qc,qi,F_QC,F_QI,               &
-                       ids,ide, jds,jde, kds,kde,            &
-                       ims,ime, jms,jme, kms,kme,            &
-                       its,ite, jts,jte, kts,kte             )
+        CALL ETACLOUDFRACTION(                                      &
+                  DT=dt                                             &
+                 ,P8W=p8w,DZ8W=dz8w,RHO_PHY=rho,P_PHY=p,T=t         &
+                 ,QV=qv,QW=qc_temp,QI=qi,QS=qs                      &
+                 ,CLDFRA=CLDFRA                                     &
+                 ,HTOP=htop,HBOT=hbot                               &
+                 ,HBOTR=hbotr, HTOPR=htopr                          &
+                 ,CUPPT=cuppt                                       &
+                 ,G=g,NSTEPRA=stepra                                &
+                 ,CFRACL=cfracl,CFRACM=cfracm,CFRACH=cfrach         &
+                 ,ACFRST=acfrst,NCFRST=ncfrst                       &
+                 ,ACFRCV=acfrcv,NCFRCV=ncfrcv                       &
+                 ,IDS=ids,IDE=ide, JDS=jds,JDE=jde, KDS=kds,KDE=kde &     
+                 ,IMS=ims,IME=ime, JMS=jms,JME=jme, KMS=kms,KME=kme &
+                 ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte )
+
+
      ENDIF
 
      END SELECT lwrad_cldfra_select    

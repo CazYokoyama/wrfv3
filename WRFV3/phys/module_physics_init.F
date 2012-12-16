@@ -13,6 +13,7 @@ MODULE module_physics_init
    USE module_state_description
    USE module_model_constants
    USE module_configure, ONLY : grid_config_rec_type
+   USE module_ra_gfdleta, ONLY: etacloudcoverinit
 !  USE module_ssib_veg , ONLY : init_module_ssib_veg !fds (SSiB constants)
 
 CONTAINS
@@ -1385,6 +1386,11 @@ integer myproc
      ENDIF
    ENDIF
 #endif
+!jack - setup needed for eta cloud fraction routine
+   CALL etacloudcoverinit( shalf,pptop,      &
+                          ids, ide, jds, jde, kds, kde, &
+                          ims, ime, jms, jme, kms, kme, &
+                          its, ite, jts, jte, kts, kte  )
 
    END SUBROUTINE ra_init
 

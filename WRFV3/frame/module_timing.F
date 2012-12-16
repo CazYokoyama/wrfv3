@@ -88,6 +88,8 @@ CONTAINS
 !     PRINT '(A,A,A,F10.5,A)' ,'Timing for ',TRIM(string),': ',cpu_seconds,' cpu seconds.'
 
       cn = cn - 1
+	
+ 	CALL FLUSH(6)
 
    END SUBROUTINE end_timing
 

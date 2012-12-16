@@ -35,6 +35,8 @@ SUBROUTINE wrf_message( str )
   CALL ESMF_LogWrite(TRIM(str),ESMF_LOGMSG_INFO)
 #endif
   print*, TRIM(str)
+
+  CALL FLUSH(6)
 END SUBROUTINE wrf_message
 
 ! intentionally write to stderr only
@@ -45,6 +47,8 @@ SUBROUTINE wrf_message2( str )
   IMPLICIT NONE
   CHARACTER*(*) str
   write(0,*) str
+
+  CALL FLUSH(6)
 # ifdef _WIN32
   FLUSH(0)
 # endif

@@ -49,7 +49,9 @@ MODULE MODULE_RA_GFDLETA
 !
 !--- Used for Gaussian look up tables
 !
-      REAL, PRIVATE,PARAMETER :: XSDmax=3.1, DXSD=.01
+!jack - dont need accuracy of 100 iter gaussian - use 20 instead
+      REAL, PRIVATE, PARAMETER :: XSDmax=3.1, DXSD=.05
+!original       REAL, PRIVATE, PARAMETER :: XSDmax=3.1, DXSD=.01
       INTEGER, PRIVATE,PARAMETER :: NXSD=XSDmax/DXSD
       REAL, DIMENSION(NXSD),PRIVATE,SAVE :: AXSD
       REAL, PRIVATE :: RSQR
@@ -10151,7 +10153,935 @@ CONTAINS
 
       END FUNCTION e_sub_i
 
+!***********************************************************************
+!!!JACK - NO MODS MADE ABOVE THIS LINE 
+!***********************************************************************
+
+!JACK - note that QI and QS added in 1st routine and passed to 2nd routine as QIFLIP
+!JACK - note that calculates simple binary (0,1) 3d cloud fraction CLDFRA which will be overwritten if cal_cldfra2 subroutine active
+!JACK - called only at each rad time step for efficiency
+
+!-----------------------------------------------------------------------
+      SUBROUTINE ETACLOUDCOVERINIT( SHALF,PPTOP,             &
+     &                       IDS, IDE, JDS, JDE, KDS, KDE,              &
+     &                       IMS, IME, JMS, JME, KMS, KME,              &
+     &                       ITS, ITE, JTS, JTE, KTS, KTE              )
+!-----------------------------------------------------------------------
+      IMPLICIT NONE
+!-----------------------------------------------------------------------
+      TYPE (GRID_CONFIG_REC_TYPE) :: CONFIG_FLAGS
+      INTEGER,INTENT(IN) :: IDS,IDE,JDS,JDE,KDS,KDE                     &
+     &                     ,IMS,IME,JMS,JME,KMS,KME                     &
+     &                     ,ITS,ITE,JTS,JTE,KTS,KTE
+      REAL,INTENT(IN) :: PPTOP
+      REAL,DIMENSION(KMS:KME),INTENT(IN) :: SHALF
 !
+      INTEGER :: I,N
+      REAL :: PCLD,XSD,PI,SQR2PI
+      REAL :: SSLP=1013.25
+      REAL, PARAMETER :: PTOP_HI=150.,PTOP_MID=350.,PTOP_LO=642.,       &
+     &                   PLBTM=105000.
+!-----------------------------------------------------------------------
+!***********************************************************************
+!-----------------------------------------------------------------------
+!
+!***  INITIALIZE DIAGNOSTIC LOW,MIDDLE,HIGH CLOUD LAYER PRESSURE LIMITS.
+!
+      LTOP(1)=0
+      LTOP(2)=0
+      LTOP(3)=0
+!
+      DO N=1,KTE
+        PCLD=(SSLP-PPTOP*10.)*SHALF(N)+PPTOP*10.
+        IF(PCLD>=PTOP_LO)LTOP(1)=N
+        IF(PCLD>=PTOP_MID)LTOP(2)=N
+        IF(PCLD>=PTOP_HI)LTOP(3)=N
+!       PRINT *,N,PCLD,SHALF(N),PSTAR,PPTOP
+      ENDDO
+!***  
+!***  ASSIGN THE PRESSURES FOR CLOUD DOMAIN BOUNDARIES
+!***
+      PTOPC(1)=PLBTM
+      PTOPC(2)=PTOP_LO*100.
+      PTOPC(3)=PTOP_MID*100.
+      PTOPC(4)=PTOP_HI*100.
+
+!---  Calculate the area under the Gaussian curve at the start of the
+!---  model run and build the look up table AXSD
+!
+      PI=ACOS(-1.)
+      SQR2PI=SQRT(2.*PI)
+      RSQR=1./SQR2PI
+      DO I=1,NXSD
+        XSD=REAL(I)*DXSD
+        AXSD(I)=GAUSIN(XSD)
+        if (SDprint) print *,'I, XSD, AXSD =',I,XSD,AXSD(I)
+      ENDDO
+
+!! !***
+!! !***  MESO STANDARD DEVIATION OF EK AND MAHRT'S CLOUD COVER ALOGRITHM
+!! !***
+!!         SDM=-0.03-0.00015*DX+0.02*LOG(DX)  ! meso SD
+!!         if (SDprint) print *,'DX, SDM=',DX,SDM
+!       if (SDprint) print *,                                            &
+!     & 'RHgrd,T_ICE,NLImin,NLImax,FLARGE1,FLARGE2,MDImin,MDImax=',&
+!     &  RHgrd,T_ICE,NLImin,NLImax,FLARGE1,FLARGE2,MDImin,MDImax
+!
+!-----------------------------------------------------------------------
+      END SUBROUTINE ETACLOUDCOVERINIT
+!-----------------------------------------------------------------------
+
+!***********************************************************************
+
+!JACK - MUST ENABLE CALL TO SUBROUTINE GFDLETAINIT in module_physics_init.F (since it needs args PPTOP & SHALF which are not available in module_radiation_driver)
+
+!                 CALL ETACLOUDFRACTION(                            &
+!                  DT=dt                                             &
+!                 ,P8W=p8w,DZ8W=dz8w,RHO_PHY=rho,P_PHY=p,T=t         &
+!                 ,QV=qv,QW=qc_temp,QI=qi,QS=qs                      &
+!                 ,CLDFRA=CLDFRA              &
+!                 ,HTOP=htop,HBOT=hbot           &
+!                 ,HBOTR=hbotr, HTOPR=htopr                          &
+!                 ,CUPPT=cuppt                         &
+!                 ,G=g              &
+!                 ,NSTEPRA=stepra      &
+!                 ,CFRACL=cfracl,CFRACM=cfracm,CFRACH=cfrach         &
+!                 ,ACFRST=acfrst,NCFRST=ncfrst                       &
+!                 ,ACFRCV=acfrcv,NCFRCV=ncfrcv                       &
+!                 ,IDS=ids,IDE=ide, JDS=jds,JDE=jde, KDS=kds,KDE=kde &     
+!                 ,IMS=ims,IME=ime, JMS=jms,JME=jme, KMS=kms,KME=kme &
+!                 ,ITS=its,ITE=ite, JTS=jts,JTE=jte, KTS=kts,KTE=kte )
+
+!-----------------------------------------------------------------------
+      SUBROUTINE ETACLOUDFRACTION( CLDFRA      & 
+     &                ,P8W,DZ8W,RHO_PHY,P_PHY,T                   &
+     &                ,QV,QW,QI,QS                                      & 
+     &                ,HTOP,HBOT,HTOPR,HBOTR,CUPPT     &
+     &                ,G                                &
+     &                ,CFRACL,CFRACM,CFRACH                             &
+     &                ,ACFRST,NCFRST,ACFRCV,NCFRCV                      &
+     &                ,DT,NSTEPRA                                       &
+     &                ,IDS,IDE,JDS,JDE,KDS,KDE                          &
+     &                ,IMS,IME,JMS,JME,KMS,KME                          &
+     &                ,ITS,ITE,JTS,JTE,KTS,KTE)
+!-----------------------------------------------------------------------
+!JACK - modified from subroutine ETARA
+!-----------------------------------------------------------------------
+      IMPLICIT NONE
+!-----------------------------------------------------------------------
+      INTEGER,INTENT(IN) :: IDS,IDE,JDS,JDE,KDS,KDE                     &
+     &                     ,IMS,IME,JMS,JME,KMS,KME                     &
+     &                     ,ITS,ITE,JTS,JTE,KTS,KTE,           &
+     &                     NSTEPRA
+      REAL,INTENT(IN) :: DT,G
+      REAL,INTENT(INOUT),DIMENSION(ims:ime, kms:kme, jms:jme):: CLDFRA  !Added CLDFRA
+      INTEGER,INTENT(INOUT),DIMENSION(ims:ime,jms:jme) :: NCFRST        & !Added
+                                                         ,NCFRCV          !Added
+      REAL,INTENT(IN),DIMENSION(ims:ime, kms:kme, jms:jme)::p8w,dz8w,   &
+     &                                                      rho_phy,    &
+     &                                                      p_phy
+      REAL, INTENT(INOUT), DIMENSION(ims:ime, jms:jme):: HTOP,HBOT,HTOPR,HBOTR,CUPPT
+      REAL, INTENT(INOUT), DIMENSION(ims:ime, jms:jme)::                &
+     &                                                   ACFRST,        & !Added
+     &                                                   ACFRCV
+      REAL,INTENT(OUT),DIMENSION(ims:ime, jms:jme):: CFRACL,CFRACM,CFRACH
+      REAL, INTENT(IN), DIMENSION(ims:ime, kms:kme, jms:jme):: QS,QV,   &
+     &                                                         QW,T
+      REAL, OPTIONAL, INTENT(IN), DIMENSION(ims:ime, kms:kme, jms:jme):: QI
+      REAL, DIMENSION(its:ite, kms:kme, jts:jte):: PFLIP,QIFLIP,QFLIP,  &
+     &                                             QWFLIP,TFLIP
+      REAL, DIMENSION(its:ite, kms:kme, jts:jte)::P8WFLIP,PHYD
+      REAL, DIMENSION(ims:ime, jms:jme):: CUTOP,CUBOT
+      INTEGER :: I,J,K,KFLIP
+!
+!***********************************************************************
+!
+      DO J=JMS,JME
+        DO K=KMS,KME
+          DO I=IMS,IME
+            CLDFRA(I,K,J)=0.
+          ENDDO
+        ENDDO
+      ENDDO
+! NEED HYDROSTATIC PRESSURE HERE (MONOTONIC CHANGE WITH HEIGHT)
+      DO J=JTS,JTE
+      DO I=ITS,ITE
+        PHYD(I,KTS,J)=P8W(I,KTS,J) 
+      ENDDO
+      ENDDO
+!
+      DO J=JTS,JTE
+        DO K=KTS,KTE
+        DO I=ITS,ITE
+          PHYD(I,K+1,J)=PHYD(I,K,J)-G*RHO_PHY(I,K,J)*DZ8W(I,K,J)
+        ENDDO
+        ENDDO
+      ENDDO
+!
+      DO K=KMS,KME
+         KFLIP=KME+1-K
+         DO J=JTS,JTE
+         DO I=ITS,ITE
+           P8WFLIP(I,K,J)=PHYD(I,KFLIP,J)
+         ENDDO
+         ENDDO
+      ENDDO
+!
+!- Note that the effects of rain are ignored in this radiation package (BSF 2005-01-25)
+!
+      DO K=KTS,KTE
+        KFLIP=KTE+1-K
+        DO J=JTS,JTE
+        DO I=ITS,ITE
+          TFLIP (I,K,J)=T(I,KFLIP,J)
+          QFLIP (I,K,J)=MAX(0.,QV(I,KFLIP,J)/(1.+QV(I,KFLIP,J)))
+          QWFLIP(I,K,J)=QW(I,KFLIP,J)      !Modified
+! Note that QIFLIP will contain QS+QI if both are passed in, otherwise just QS 
+!     Eta MP now outputs QS instead of QI (JD 2006-05-12)
+          QIFLIP(I,K,J)=QS(I,KFLIP,J)      !Added QS
+          IF(PRESENT(QI))QIFLIP(I,K,J)=QIFLIP(I,K,J)+QI(I,KFLIP,J)      !Added QI
+!         PFLIP (I,K,J)=P_PHY(I,KFLIP,J)
+!
+!***  USE MONOTONIC HYDROSTATIC PRESSURE INTERPOLATED TO MID-LEVEL
+!
+          PFLIP(I,K,J)=0.5*(P8WFLIP(I,K,J)+P8WFLIP(I,K+1,J))
+        ENDDO
+        ENDDO
+      ENDDO
+!
+      DO J=JTS,JTE
+      DO I=ITS,ITE
+        CUBOT(I,J)=KTE+1-HBOT(I,J)
+        CUTOP(I,J)=KTE+1-HTOP(I,J)
+      ENDDO
+      ENDDO
+
+!-----------------------------------------------------------------------
+      CALL CLOUDFRACTION (TFLIP,QFLIP,QWFLIP,QIFLIP,                         &
+     &            PFLIP,P8WFLIP,                            &
+     &            CUTOP,CUBOT,CUPPT,                   &
+     &            ACFRCV,NCFRCV,ACFRST,NCFRST,                          &
+     &            CLDFRA,                              &
+     &            CFRACL,CFRACM,CFRACH,                                 &
+     &            DT,NSTEPRA,                           &
+     &            IDS,IDE,JDS,JDE,KDS,KDE,                              &
+     &            IMS,IME,JMS,JME,KMS,KME,                              &
+     &            ITS,ITE,JTS,JTE,KTS,KTE                              )
+!-----------------------------------------------------------------------
+
+!***  RESET ACCUMULATED CONVECTIVE CLOUD TOP/BOT AND CONVECTIVE PRECIP
+!***  FOR NEXT INTERVAL BETWEEN RADIATION CALLS
+!
+      DO J=JTS,JTE
+      DO I=ITS,ITE
+! SAVE VALUE USED BY RADIATION BEFORE RESETTING HTOP AND HBOT
+        HBOTR(I,J)=HBOT(I,J)
+        HTOPR(I,J)=HTOP(I,J)
+        HBOT(I,J)=REAL(KTE+1)
+        HTOP(I,J)=0.
+        CUPPT(I,J)=0.
+      ENDDO
+      ENDDO
+
+!!!JACK - print eta cloud fraction 2d results for single hard-wired i,j location (omit 3d CLDFRA)
+!4testprint: write(6,'(a14,1x,3i3,1x,2i3,1x,3f6.3,1x,2(i4,f7.1))') '--- ETA CFRAC:', ite,jte,kte, 20,24, CFRACL(20,24),CFRACM(20,24),CFRACH(20,24), NCFRST(20,24),ACFRST(20,24),NCFRCV(20,24),ACFRCV(20,24)
+
+!
+  END SUBROUTINE ETACLOUDFRACTION
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+!-----------------------------------------------------------------------
+      SUBROUTINE CLOUDFRACTION(T,Q,QCW,QICE,                                 &
+     &                 PFLIP,P8WFLIP,                      &
+     &                 CUTOP,CUBOT, CUPPT,                 &
+     &                 ACFRCV,NCFRCV,ACFRST,NCFRST,                     &
+     &                 CLDFRA,         &
+     &                 CFRACL,CFRACM,CFRACH,                            &
+     &                 DT,NSTEPRA,                                      &
+     &                 ids,ide, jds,jde, kds,kde,                       &
+     &                 ims,ime, jms,jme, kms,kme,                       &
+     &                 its,ite, jts,jte, kts,kte                       )
+!-----------------------------------------------------------------------
+!JACK - modified from subroutine RADTN
+!-----------------------------------------------------------------------
+      IMPLICIT NONE
+!-----------------------------------------------------------------------
+
+! CUBOT : (REAL) model layer number that is lowest in the atmosphere
+!        in which convective cloud occurred since the previous call to the
+!        radiation driver.
+
+!!!JACK - I THINK THESE ARE ONLY COMPUTED FOR DIAGNOSTICS AND NOT REALLY NEEDED
+!jack     they are not zeroed when new history file written so will be from start of run
+! ACFRCV : sum of the convective cloud fractions that were computed
+!          during each call to the radiation between calls to the subroutines that
+!          do the forecast output.
+! NCFRCV : the total number of times in which the convective cloud
+!          fraction was computed to be greater than zero in the radiation between
+!          calls to the output routines.  In the post-processor, ACFRCV is divided
+!          by NCFRCV to yield an average convective cloud fraction.
+! ACFRST and NCFRST are the analogs for stratiform cloud cover.
+
+!          LVL holds the number of model layers that lie below the ground surface
+!          at each point.  Clearly for sigma coordinates LVL is zero everywhere.
+
+! CTHK  :  an assumed maximum thickness of stratiform clouds currently set
+!          to 20000 Pascals.  I think this is relevant for computing "low",
+!          "middle", and "high" cloud fractions which are post-processed but which
+!          do not feed back into the integration.
+
+! LTOP  : a 3-element integer array holding the model layer that is at or
+!         immediately below the specified pressure levels for the tops 
+!         of "high" (15000 Pa), "middle" (35000 Pa), and "low" (64200 Pa) 
+!         stratiform clouds.  These are for the diagnostic cloud layers 
+!         needed in the output but not in the integration.
+
+! CLDFRA : 3D cloud fraction
+
+! CFRACL,CFRACM,CFRACH : low, middle, & high (diagnosed) cloud fractions
+
+!-----------------------------------------------------------------------
+      INTEGER, INTENT(IN)        :: ids,ide, jds,jde, kds,kde ,         &
+     &                              ims,ime, jms,jme, kms,kme ,         &
+     &                              its,ite, jts,jte, kts,kte
+      REAL, INTENT(IN)           :: DT
+      INTEGER, INTENT(IN)        :: NSTEPRA
+!-----------------------------------------------------------------------
+      INTEGER            :: LM1,LP1,LM
+!-----------------------------------------------------------------------
+! !jack - from module headers
+! !--- Used for Gaussian look up tables
+!       REAL, PRIVATE, PARAMETER :: XSDmax=3.1, DXSD=.01
+!       INTEGER, PRIVATE, PARAMETER :: NXSD=XSDmax/DXSD
+!       REAL, PRIVATE, DIMENSION(NXSD),SAVE :: AXSD
+!       LOGICAL, PRIVATE, SAVE :: SDprint=.FALSE.
+!-----------------------------------------------------------------------
+      REAL, PARAMETER :: EPSQ1=1.E-5,EPSQ=1.E-12,EPSO3=1.E-10,H0=0.     &
+     &, H1=1.,HALF=.5,T0C=273.15,CUPRATE=24.*1000.,HPINC=HALF*1.E1      &
+!------------------------ For Clouds ----------------------------------
+     &, CLFRmin=0.01                                     &
+!--- Parameters used for new cloud cover scheme
+     &, XSDmin=-XSDmax, DXSD1=-DXSD, STSDM=0.01, CVSDM=.04              &
+     &, DXSD2=HALF*DXSD, DXSD2N=-DXSD2, PCLDY=0.25
+!
+      INTEGER, PARAMETER :: NB=12,KSMUD=0
+      INTEGER,PARAMETER :: K15=SELECTED_REAL_KIND(15)
+      REAL (KIND=K15) :: DDX,EEX,PROD
+!-----------------------------------------------------------------------
+      LOGICAL :: SHORT,LONG
+      LOGICAL :: BITX,BITY,BITZ,BITW,BIT1,BIT2,BITC,BITCP1,BITSP1
+      LOGICAL, SAVE :: CNCLD=.TRUE.
+      LOGICAL :: NEW_CLOUD
+!-----------------------------------------------------------------------
+      REAL, INTENT(IN), DIMENSION(its:ite, kms:kme, jts:jte):: Q,QCW,   &
+     &                                                         QICE,T,  &
+     &                                                         PFLIP,   &
+     &                                                         P8WFLIP
+      REAL, INTENT(OUT), DIMENSION(ims:ime, jms:jme):: CFRACL,CFRACM    &
+     &                                                ,CFRACH
+      REAL, INTENT(OUT),DIMENSION(ims:ime,kms:kme,jms:jme) :: CLDFRA   !added
+!-----------------------------------------------------------------------
+      REAL, INTENT(IN), DIMENSION(ims:ime,jms:jme) :: CUTOP,CUBOT,CUPPT
+!-----------------------------------------------------------------------
+      REAL,   DIMENSION(ims:ime,jms:jme)  :: CZEN
+      INTEGER, DIMENSION(its:ite, jts:jte):: LMH
+!-----------------------------------------------------------------------
+      REAL,   INTENT(INOUT), DIMENSION(ims:ime,jms:jme) :: ACFRCV,ACFRST 
+      INTEGER,INTENT(INOUT), DIMENSION(ims:ime,jms:jme) :: NCFRCV,NCFRST
+!-----------------------------------------------------------------------
+      REAL :: CTHK(3)
+      DATA CTHK/20000.0,20000.0,20000.0/
+      REAL,DIMENSION(10),SAVE :: CC,PPT
+!-----------------------------------------------------------------------
+      INTEGER,DIMENSION(its:ite,jts:jte) :: LVL
+      REAL,   DIMENSION(  0:kte)  :: CLDAMT
+      REAL,   DIMENSION(its:ite,3):: CLDCFR
+      INTEGER,   DIMENSION(its:ite,3):: MBOT,MTOP
+      REAL,   DIMENSION(its:ite,kts:kte) :: PMID,TMID
+      REAL,   DIMENSION(its:ite,kts:kte) :: QMID,THMID,OZN,POZN
+      REAL,   DIMENSION(its:ite,jts:jte) :: TOT 
+      REAL,   DIMENSION(its:ite,kts:kte+1) :: PINT,CAMT
+      INTEGER,DIMENSION(its:ite,kts:kte+1) :: KBTM,KTOP
+      INTEGER,DIMENSION(its:ite)   :: NCLDS,KCLD 
+      REAL,   DIMENSION(its:ite,NB,kts:kte+1) ::RRCL,TTCL
+      REAL,   DIMENSION(its:ite,kts:kte):: CSMID,CCMID,QWMID,QIMID
+!-----------------------------------------------------------------------
+      REAL    :: EXNER,CCLIMIT,CLIMIT,P1,P2,CC1,CC2
+      REAL    :: PMOD,CLFR1,WV,ARG,CLDMAX
+      REAL    :: CL1,CL2,CR1,DPCL,QSUM,PRS1,PRS2,DELP,TCLD,DD,EE,AA,FF
+      REAL    :: BB,GG,FCTR,CFRAVG,SNOMM
+      REAL    :: THICK,CONVPRATE,CLFR,ESAT,QSAT,RHUM,QCLD
+      REAL    :: RHtot,RRHO,FLARGE,FSMALL,DSNOW,SDM,QPCLDY,DIFCLD
+      REAL    :: CFSmax,CFCmax
+      INTEGER :: I,J,MYJS,MYJE,MYIS,MYIE,NTSPH,ITIMSW,ITIMLW,    &
+     &           JD,II
+      INTEGER :: L,N,LML,LVLIJ,IR,KNTLYR,LL,NC,NMOD,IWKL
+      INTEGER :: LCNVB,LCNVT
+      INTEGER :: NLVL,MALVL,LLTOP,LLBOT,KBT2,KTH1,KBT1,KTH2,KTOP1,KFLIP
+      INTEGER :: NCLD,LBASE,NKTP,NBTM,KS,MYJS1,MYJS2,MYJE2,MYJE1
+      REAL    :: CLSTP
+
+      INTEGER :: INDEXS,IXSD
+      DATA    CC/0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0/
+      DATA    PPT/0.,.14,.31,.70,1.6,3.4,7.7,17.,38.,85./
+
+! begin debugging radiation
+      integer :: imd,jmd, Jndx
+      real :: FSWrat
+      imd=(ims+ime)/2
+      jmd=(jms+jme)/2
+! end debugging radiation
+!=======================================================================
+!
+      MYJS=jts
+      MYJE=jte
+      MYIS=its
+      MYIE=ite
+      MYJS1=jts !????
+      MYJE1=jte
+      MYJS2=jts
+      MYJE2=jte
+      LM=kte
+      LM1=LM-1
+      LP1=LM+1
+!
+      DO J=JTS,JTE
+      DO I=ITS,ITE
+        LMH(I,J)=KME-1
+        LVL(I,J)=0
+      ENDDO
+      ENDDO
+!**********************************************************************
+!***  THE FOLLOWING CODE IS EXECUTED EACH TIME THE RADIATION IS CALLED.
+!**********************************************************************
+
+!  CLSTP IS THE NUMBER OF HOURS OF THE ACCUMULATION PERIOD
+!jack - simplification made here since only one type of radiation step
+      NTSPH=NINT(3600./DT)
+      CLSTP=1.0*NSTEPRA/NTSPH
+      CONVPRATE=CUPRATE/CLSTP
+
+!-----------------------------------------------------------------------
+!
+!***********************************************************************
+!***  THIS IS THE BEGINNING OF THE PRIMARY LOOP THROUGH THE DOMAIN
+!***********************************************************************
+!                        *********************
+                         DO 700 J = MYJS, MYJE
+!                        *********************
+!
+      DO 125 L=1,LM
+      DO I=MYIS,MYIE
+        TMID(I,L)=T(I,1,J)
+        QMID(I,L)=EPSQ
+        QWMID(I,L)=0.
+        QIMID(I,L)=0.
+        CSMID(I,L)=0.
+        CCMID(I,L)=0.
+      ENDDO
+  125 CONTINUE
+!
+      DO 140 N=1,3
+      DO I=MYIS,MYIE
+        CLDCFR(I,N)=0.
+        MTOP(I,N)=0
+        MBOT(I,N)=0
+      ENDDO
+  140 CONTINUE
+!***
+!***  FILL IN WORKING ARRAYS WHERE VALUES AT L=LM ARE THOSE THAT
+!***  ARE ACTUALLY AT ETA LEVEL L=LMH.
+!***
+      DO 200 I=MYIS,MYIE
+!     IR=IRAD(I)
+      LML=LMH(I,J)
+      LVLIJ=LVL(I,J)
+!
+      DO L=1,LML
+        PMID(I,L+LVLIJ)=PFLIP(I,L,J)
+        PINT(I,L+LVLIJ+1)=P8WFLIP(I,L+1,J)
+        EXNER=(1.E5/PMID(I,L+LVLIJ))**RCP
+        TMID(I,L+LVLIJ)=T(I,L,J)
+        THMID(I,L+LVLIJ)=T(I,L,J)*EXNER
+        QMID(I,L+LVLIJ)=MAX(EPSQ, Q(I,L,J))
+!--- Note that rain is ignored, only effects from cloud water and 
+!    ice (cloud ice + snow) are considered
+        QWMID(I,L+LVLIJ)=QCW(I,L,J)
+        QIMID(I,L+LVLIJ)=QICE(I,L,J)
+      ENDDO
+!***
+!***  FILL IN ARTIFICIAL VALUES ABOVE THE TOP OF THE DOMAIN.
+!***  PRESSURE DEPTHS OF THESE LAYERS IS 1 HPA.
+!***  TEMPERATURES ABOVE ARE ALREADY ISOTHERMAL WITH (TRUE) LAYER 1.
+!***
+      IF(LVLIJ.GT.0)THEN
+        KNTLYR=0
+!
+        DO L=LVLIJ,1,-1
+          KNTLYR=KNTLYR+1
+          PMID(I,L)=P8WFLIP(I,1,J)-REAL(2*KNTLYR-1)*HPINC
+          PINT(I,L+1)=PMID(I,L)+HPINC
+          EXNER=(1.E5/PMID(I,L))**RCP
+          THMID(I,L)=TMID(I,L)*EXNER
+        ENDDO
+      ENDIF
+!
+      IF(LVLIJ.EQ.0) THEN
+         PINT(I,1)=P8WFLIP(I,1,J)
+      ELSE
+         PINT(I,1)=PMID(I,1)-HPINC
+      ENDIF
+  200 CONTINUE
+!-----------------------------------------------------------------------
+!---  COMPUTE GRID-SCALE CLOUD COVER FOR RADIATION  (Ferrier, Nov '04)
+!
+!--- Assumes Gaussian-distributed probability density functions (PDFs) for
+!    total relative humidity (RHtot) within the grid for convective and
+!    grid-scale cloud processes.  The standard deviation of RHtot is assumed
+!    to be larger for convective clouds than grid-scale (stratiform) clouds.
+!-----------------------------------------------------------------------
+!
+      DO I=MYIS,MYIE
+        LML=LMH(I,J)
+        LVLIJ=LVL(I,J)
+        DO 255 L=1,LML
+            LL=L+LVLIJ
+            WV=QMID(I,LL)/(1.-QMID(I,LL))       !--- Water vapor mixing ratio
+            QCLD=QWMID(I,LL)+QIMID(I,LL)        !--- Total cloud water + ice mixing ratio
+            IF (QCLD .LE. EPSQ) GO TO 255       !--- Skip if no condensate is present
+            CLFR=H0
+            WV=QMID(I,LL)/(1.-QMID(I,LL))       !--- Water vapor mixing ratio
+               
+    !
+    !--- Saturation vapor pressure w/r/t water ( >=0C ) or ice ( <0C )
+    !
+#ifdef FERRIER_GFDL
+            ESAT=1000.*FPVS(TMID(I,LL))         !--- Saturation vapor pressure (Pa)
+#else
+            ESAT=FPVS_new(TMID(I,LL))           !--- Saturation vapor pressure (Pa)
+#endif
+            QSAT=EP_2*ESAT/(PMID(I,LL)-ESAT)    !--- Saturation mixing ratio
+            RHUM=WV/QSAT                        !--- Relative humidity
+    !
+    !--- Revised cloud cover parameterization (temporarily ignore rain)
+    !
+            RHtot=(WV+QCLD)/QSAT                !--- Total relative humidity
+!!    !
+!!    !--- QOVRCST is the amount of cloud condensate associated with full
+!!    !    overcast, PCLDY is an arbitrary factor for partial cloudiness
+!!    !
+!!            TCLD=TMID(I,LL)-T0C                 !--- Air temp in deg C
+!!            RRHO=(R_D*TMID(I,LL)*(1.+EP_1*QMID(I,LL)))/PMID(I,LL)
+!!            IF (TCLD .GE. 0.) THEN
+!!               QOVRCST(I,LL)=QAUT0*RRHO
+!!            ELSE
+!!               IF (TCLD.GE.-8. .AND. TCLD.LE.-3.) THEN
+!!                  FLARGE=FLARGE1
+!!               ELSE
+!!                  FLARGE=FLARGE2
+!!               ENDIF
+!!               FSMALL=(1.-FLARGE)/FLARGE
+!!               DSNOW=XMImax*EXP(XMIexp*TCLD)
+!!               INDEXS=MAX(MDImin, MIN(MDImax, INT(DSNOW)))
+!!               QOVRCST(I,LL)=NLImax*( FSMALL*MASSI(MDImin)              &
+!!     &                               +MASSI(INDEXS) )*RRHO
+!!            ENDIF                 !--- End IF (TCLD .GE. 0.)
+!!            QOVRCST(I,LL)=PCLDY*QOVRCST(I,LL)
+            LCNVT=NINT(CUTOP(I,J))+LVLIJ
+            LCNVT=MIN(LM,LCNVT)
+            LCNVB=NINT(CUBOT(I,J))+LVLIJ
+            LCNVB=MIN(LM,LCNVB)
+            IF (LL.GE.LCNVT .AND. LL.LE.LCNVB) THEN
+               SDM=CVSDM
+            ELSE
+               SDM=STSDM
+            ENDIF
+            ARG=(RHtot-RHgrd)/SDM
+            IF (ARG.LE.DXSD2 .AND. ARG.GE.DXSD2N) THEN
+               CLFR=HALF
+            ELSE IF (ARG .GT. DXSD2) THEN
+               IF (ARG .GE. XSDmax) THEN
+                  CLFR=H1
+               ELSE
+                  IXSD=INT(ARG/DXSD+HALF)
+                  IXSD=MIN(NXSD, MAX(IXSD,1))
+                  CLFR=HALF+AXSD(IXSD)
+                  if (SDprint)                                          &
+     & write(6,"(a,3i3,i4,f8.4,f7.4,2f6.3,f7.3,f6.1,f6.0)")                 &
+     & 'I,LL,J,IXSD,ARG,SDM,CLFR,RHtot,QSAT,T,P=', I,LL,J,IXSD,ARG,SDM,CLFR,RHtot     &
+     & ,1000.*QSAT,TCLD,.01*PMID(I,LL)
+               ENDIF              !--- End IF (ARG .GE. XSDmax)
+            ELSE
+               IF (ARG .LE. XSDmin) THEN
+                  CLFR=H0
+               ELSE
+                  IXSD=INT(ARG/DXSD1+HALF)
+                  IXSD=MIN(NXSD, MAX(IXSD,1))
+                  CLFR=HALF-AXSD(IXSD)
+                  if (SDprint)                                          &
+     & write(6,"(a,3i3,i4,f8.4,f7.4,2f6.3,f7.3,f6.1,f6.0)")                 &
+     & 'I,LL,J,IXSD,ARG,SDM,CLFR,RHtot,QSAT,T,P=', I,LL,J,IXSD,ARG,SDM,CLFR,RHtot     &
+     & ,1000.*QSAT,TCLD,.01*PMID(I,LL)
+                  IF (CLFR .LT. CLFRmin) CLFR=H0
+               ENDIF        !--- End IF (ARG .LE. XSDmin) 
+            ENDIF           !--- IF (ARG.LE.DXSD2 .AND. ARG.GE.DXSD2N)
+            CSMID(I,LL)=CLFR
+!!  !
+!!  !--- Here the condensate is adjusted to be only over the cloudy area
+!!  !
+!!            IF (CLFR.GT.0. .AND. QCLD.LE.0.) THEN
+!!  !
+!!  !--- Put in modest amounts of cloud water & cloud ice for partially cloudy grids
+!!  !
+!!               QPCLDY=MIN(.01*QSAT, QOVRCST(I,LL))
+!!               IF (TCLD .GE. H0) THEN
+!!                  QWMID(I,LL)=QPCLDY
+!!               ELSE
+!!                  QIMID(I,LL)=QPCLDY
+!!               ENDIF
+!!            ENDIF          !--- End IF (CLFR.GT.0. .AND. QCLD.LE.0.) 
+ 255       CONTINUE         !--- End DO L=1,LML
+      ENDDO                !--- End DO I=MYIS,MYIE
+!
+!***********************************************************************
+!******************  END OF GRID-SCALE CLOUD FRACTIONS  ****************
+!
+!---  COMPUTE CONVECTIVE CLOUD COVER FOR RADIATION 
+!
+!--- The parameterization of Slingo (1987, QJRMS, Table 1, p. 904) is 
+!    used for convective cloud fraction as a function of precipitation 
+!    rate.  Cloud fractions have been increased by 20% for each rainrate
+!    interval so that shallow, nonprecipitating convection is ascribed a
+!    constant cloud fraction of 0.1  (Ferrier, Feb '02).
+!***********************************************************************
+!
+      IF (CNCLD) THEN
+        DO I=MYIS,MYIE
+!
+!***  CLOUD TOPS AND BOTTOMS COME FROM CUCNVC
+!     Convective clouds need to be at least 2 model layers thick
+!
+          IF (CUBOT(I,J)-CUTOP(I,J) .GT. 1.0) THEN
+ !--- Compute convective cloud fractions if appropriate  (Ferrier, Feb '02)
+            CLFR=CC(1)
+            PMOD=CUPPT(I,J)*CONVPRATE
+            IF (PMOD .GT. PPT(1)) THEN
+              DO NC=1,10
+                IF(PMOD.GT.PPT(NC)) NMOD=NC
+              ENDDO
+              IF (NMOD .GE. 10) THEN
+                CLFR=CC(10)
+              ELSE
+                CC1=CC(NMOD)
+                CC2=CC(NMOD+1)
+                P1=PPT(NMOD)
+                P2=PPT(NMOD+1)
+                CLFR=CC1+(CC2-CC1)*(PMOD-P1)/(P2-P1)
+              ENDIF      !--- End IF (NMOD .GE. 10) ...
+              CLFR=MIN(H1, CLFR)
+            ENDIF        !--- End IF (PMOD .GT. PPT(1)) ...
+  !
+  !***  ADD LVL TO BE CONSISTENT WITH OTHER WORKING ARRAYS
+  !
+            LVLIJ=LVL(I,J)
+            LCNVT=NINT(CUTOP(I,J))+LVLIJ
+            LCNVT=MIN(LM,LCNVT)
+            LCNVB=NINT(CUBOT(I,J))+LVLIJ
+            LCNVB=MIN(LM,LCNVB)
+!! !
+!! !---- For debugging
+!! !
+!!      WRITE(6,"(2(A,I3),2(A,I2),2(A,F5.2),2(A,I2),A,F6.4)") 
+!!     & ' J=',J,' I=',I,' LCNVB=',LCNVB,' LCNVT=',LCNVT
+!!     &, ' CUBOT=',CUBOT(I,J),' CUTOP=',CUTOP(I,J)
+!!     &,' LVL=',LVLIJ,' LMH=',LMH(I,J),' CCMID=',CLFR
+!! !
+   !
+   !--- Build in small amounts of subgrid-scale convective condensate 
+   !    (simple assumptions), but only if the convective cloud fraction 
+   !    exceeds that of the grid-scale cloud fraction
+   !
+            DO LL=LCNVT,LCNVB
+              ARG=MAX(H0, H1-CSMID(I,LL))
+              CCMID(I,LL)=MIN(ARG,CLFR)
+            ENDDO           !--- End DO LL=LCNVT,LCNVB
+          ENDIF             !--- IF (CUBOT(I,J)-CUTOP(I,J) .GT. 1.0) ...
+        ENDDO               !--- End DO I loop
+      ENDIF                 !--- End IF (CNCLD) ...
+!
+!*********************************************************************
+!***************  END OF CONVECTIVE CLOUD FRACTIONS  *****************
+!*********************************************************************
+!***
+!***  DETERMINE THE FRACTIONAL CLOUD COVERAGE FOR HIGH, MID
+!***  AND LOW OF CLOUDS FROM THE CLOUD COVERAGE AT EACH LEVEL
+!***
+!***  NOTE: THIS IS FOR DIAGNOSTICS ONLY!!!
+!***
+!***
+       DO 500 I=MYIS,MYIE
+!!
+       DO L=0,LM
+         CLDAMT(L)=0.
+       ENDDO
+!!  
+!!***  NOW GOES LOW, MIDDLE, HIGH
+!!
+       DO 480 NLVL=1,3
+       CLDMAX=0.
+       MALVL=LM
+       LLTOP=LM+1-LTOP(NLVL)+LVL(I,J)
+!!***
+!!***  GO TO THE NEXT CLOUD LAYER IF THE TOP OF THE CLOUD-TYPE IN
+!!***  QUESTION IS BELOW GROUND OR IS IN THE LOWEST LAYER ABOVE GROUND.
+!!***
+       IF(LLTOP.GE.LM)GO TO 480
+!!
+       IF(NLVL.GT.1)THEN
+         LLBOT=LM+1-LTOP(NLVL-1)-1+LVL(I,J)
+         LLBOT=MIN(LLBOT,LM1)
+       ELSE
+         LLBOT=LM1
+       ENDIF
+!!
+       DO 435 L=LLTOP,LLBOT
+       CLDAMT(L)=AMAX1(CSMID(I,L),CCMID(I,L))
+       IF(CLDAMT(L).GT.CLDMAX)THEN
+         MALVL=L
+         CLDMAX=CLDAMT(L)
+       ENDIF
+   435 CONTINUE
+!!*********************************************************************
+!! NOW, CALCULATE THE TOTAL CLOUD FRACTION IN THIS PRESSURE DOMAIN
+!! USING THE METHOD DEVELOPED BY Y.H., K.A.C. AND A.K. (NOV., 1992).
+!! IN THIS METHOD, IT IS ASSUMED THAT SEPERATED CLOUD LAYERS ARE
+!! RADOMLY OVERLAPPED AND ADJACENT CLOUD LAYERS ARE MAXIMUM OVERLAPPED.
+!! VERTICAL LOCATION OF EACH TYPE OF CLOUD IS DETERMINED BY THE THICKEST
+!! CONTINUING CLOUD LAYERS IN THE DOMAIN.
+!!*********************************************************************
+       CL1=0.0
+       CL2=0.0
+       KBT1=LLBOT
+       KBT2=LLBOT
+       KTH1=0
+       KTH2=0
+!!
+       DO 450 LL=LLTOP,LLBOT
+       L=LLBOT-LL+LLTOP
+       BIT1=.FALSE.
+       CR1=CLDAMT(L)
+       BITX=(PINT(I,L).GE.PTOPC(NLVL+1)).AND.                           &
+      &     (PINT(I,L).LT.PTOPC(NLVL)).AND.                             &
+      &     (CLDAMT(L).GT.0.0)
+       BIT1=BIT1.OR.BITX
+       IF(.NOT.BIT1)GO TO 450
+!!***
+!!***  BITY=T: FIRST CLOUD LAYER; BITZ=T:CONSECUTIVE CLOUD LAYER
+!!***  NOTE:  WE ASSUME THAT THE THICKNESS OF EACH CLOUD LAYER IN THE
+!!***         DOMAIN IS LESS THAN 200 MB TO AVOID TOO MUCH COOLING OR
+!!***         HEATING. SO WE SET CTHK(NLVL)=200*E2. BUT THIS LIMIT MAY
+!!***         WORK WELL FOR CONVECTIVE CLOUDS. MODIFICATION MAY BE
+!!***         NEEDED IN THE FUTURE.
+!!***
+       BITY=BITX.AND.(KTH2.LE.0)
+       BITZ=BITX.AND.(KTH2.GT.0)
+!!
+       IF(BITY)THEN
+         KBT2=L
+         KTH2=1
+       ENDIF
+!!
+       IF(BITZ)THEN
+         KTOP1=KBT2-KTH2+1
+         DPCL=PMID(I,KBT2)-PMID(I,KTOP1)
+         IF(DPCL.LT.CTHK(NLVL))THEN
+           KTH2=KTH2+1
+         ELSE
+           KBT2=KBT2-1
+         ENDIF
+       ENDIF
+       IF(BITX)CL2=AMAX1(CL2,CR1)
+!!***
+!!*** AT THE DOMAIN BOUNDARY OR SEPARATED CLD LAYERS, RANDOM OVERLAP.
+!!*** CHOOSE THE THICKEST OR THE LARGEST FRACTION AMT AS THE CLD
+!!*** LAYER IN THAT DOMAIN.
+!!***
+       BIT2=.FALSE.
+       BITY=BITX.AND.(CLDAMT(L-1).LE.0.0.OR. &
+            PINT(I,L-1).LT.PTOPC(NLVL+1))
+       BITZ=BITY.AND.CL1.GT.0.0
+       BITW=BITY.AND.CL1.LE.0.0
+       BIT2=BIT2.OR.BITY
+       IF(.NOT.BIT2)GO TO 450
+!!
+       IF(BITZ)THEN
+         KBT1=INT((CL1*KBT1+CL2*KBT2)/(CL1+CL2))
+         KTH1=INT((CL1*KTH1+CL2*KTH2)/(CL1+CL2))+1
+         CL1=CL1+CL2-CL1*CL2
+       ENDIF
+!!
+       IF(BITW)THEN
+         KBT1=KBT2
+         KTH1=KTH2
+         CL1=CL2
+       ENDIF
+!!
+       IF(BITY)THEN
+         KBT2=LLBOT
+         KTH2=0
+         CL2=0.0
+       ENDIF
+   450 CONTINUE
+!
+       CLDCFR(I,NLVL)=AMIN1(1.0,CL1)
+       MTOP(I,NLVL)=MIN(KBT1,KBT1-KTH1+1)
+       MBOT(I,NLVL)=KBT1
+   480 CONTINUE
+   500 CONTINUE
+
+!----------------------------------------------------------------------
+! NOW, CALCULATE THE CLOUD RADIATIVE PROPERTIES AFTER DAVIS (1982),
+! HARSHVARDHAN ET AL (1987) AND Y.H., K.A.C. AND A.K. (1993).
+!----------------------------------------------------------------------
+!
+!***
+!*** INITIALIZE ARRAYS FOR USES LATER
+!***
+
+      DO 600 I=MYIS,MYIE
+      LML=LMH(I,J)
+      LVLIJ=LVL(I,J)
+!***
+!*** NOTE: LAYER=1 IS THE SURFACE, AND LAYER=2 IS THE FIRST CLOUD
+!***       LAYER ABOVE THE SURFACE AND SO ON.
+!***
+      KTOP(I,1)=LP1
+      KBTM(I,1)=LP1
+      CAMT(I,1)=1.0
+      KCLD(I)=2
+
+      DO 510 L=2,LP1
+      CAMT(I,L)=0.0
+      KTOP(I,L)=1
+      KBTM(I,L)=1
+  510 CONTINUE
+
+!### End changes so far
+!***
+!*** NOW CALCULATE THE AMOUNT, TOP, BOTTOM AND TYPE OF EACH CLOUD LAYER
+!*** CLOUD TYPE=1: STRATIFORM CLOUD
+!***       TYPE=2: CONVECTIVE CLOUD
+!*** WHEN BOTH CONVECTIVE AND STRATIFORM CLOUDS EXIST AT THE SAME POINT,
+!*** SELECT CONVECTIVE CLOUD WITH THE HIGHER CLOUD FRACTION.
+!*** CLOUD LAYERS ARE SEPARATED BY TOTAL ABSENCE OF CLOUDINESS.
+!*** NOTE: THERE IS ONLY ONE CONVECTIVE CLOUD LAYER IN ONE COLUMN.
+!*** KTOP AND KBTM ARE THE TOP AND BOTTOM OF EACH CLOUD LAYER IN TERMS
+!*** OF MODEL LEVEL.
+!***
+      NEW_CLOUD=.TRUE.
+!
+      DO L=2,LML
+        LL=LML-L+1+LVLIJ                        !-- Model layer
+        CLFR=MAX(CCMID(I,LL),CSMID(I,LL))       !-- Cloud fraction in layer
+        CLFR1=MAX(CCMID(I,LL+1),CSMID(I,LL+1))  !-- Cloud fraction in lower layer
+!-------------------
+        IF (CLFR .GE. CLFRMIN) THEN
+!--- Cloud present at level
+          IF (NEW_CLOUD) THEN
+!--- New cloud layer
+            IF(L==2.AND.CLFR1>=CLFRmin)THEN
+              KBTM(I,KCLD(I))=LL+1
+              CAMT(I,KCLD(I))=CLFR1
+            ELSE
+              KBTM(I,KCLD(I))=LL
+              CAMT(I,KCLD(I))=CLFR
+            ENDIF
+            NEW_CLOUD=.FALSE.
+          ELSE
+!--- Existing cloud layer
+            CAMT(I,KCLD(I))=AMAX1(CAMT(I,KCLD(I)), CLFR)
+          ENDIF        ! End IF (NEW_CLOUD .EQ. 0) ...
+        ELSE IF (CLFR1 .GE. CLFRMIN) THEN
+!--- Cloud is not present at level but did exist at lower level, then ...
+          IF (L .EQ. 2) THEN
+!--- For the case of ground fog
+            KBTM(I,KCLD(I))=LL+1
+            CAMT(I,KCLD(I))=CLFR1
+          ENDIF
+          KTOP(I,KCLD(I))=LL+1
+          NEW_CLOUD=.TRUE.
+          KCLD(I)=KCLD(I)+1
+          CAMT(I,KCLD(I))=0.0
+        ENDIF
+!-------------------
+      ENDDO      !--- End DO L loop
+!***
+!*** THE REAL NUMBER OF CLOUD LAYERS IS (THE FIRST IS THE GROUND;
+!*** THE LAST IS THE SKY):
+!***
+      NCLDS(I)=KCLD(I)-2
+      NCLD=NCLDS(I)
+!
+  600 CONTINUE
+!
+!***  
+!***  NOW THE VARIABLES REQUIRED BY RADFS HAVE BEEN CALCULATED.
+!***
+!----------------------------------------------------------------------
+!
+!***  ARRAYS ACFRST AND ACFRCV ACCUMULATE AVERAGE STRATIFORM AND
+!***  CONVECTIVE CLOUD FRACTIONS, RESPECTIVELY. 
+!***  ACCUMLATE THESE VARIABLES ONLY ONCE PER RADIATION CALL.
+!
+!***  ASSUME RANDOM OVERLAP BETWEEN LOW, MIDDLE, & HIGH LAYERS.
+!
+!***  UPDATE NEW 3D CLOUD FRACTION (CLDFRA)
+!
+      DO I=MYIS,MYIE
+        CFRACL(I,J)=CLDCFR(I,1)
+        CFRACM(I,J)=CLDCFR(I,2)
+        CFRACH(I,J)=CLDCFR(I,3)
+        IF(CNCLD)THEN
+          CFSmax=0.   !-- Maximum cloud fraction (stratiform component)
+          CFCmax=0.   !-- Maximum cloud fraction (convective component)
+          DO L=1,LMH(I,J)
+            LL=L+LVL(I,J)
+            CFSmax=MAX(CFSmax, CSMID(I,LL) )
+            CFCmax=MAX(CFCmax, CCMID(I,LL) )
+          ENDDO
+          ACFRST(I,J)=ACFRST(I,J)+CFSmax
+          NCFRST(I,J)=NCFRST(I,J)+1
+          ACFRCV(I,J)=ACFRCV(I,J)+CFCmax
+          NCFRCV(I,J)=NCFRCV(I,J)+1
+        ELSE
+  !--- Count only locations with grid-scale cloudiness, ignore convective clouds
+  !    (option not used, but if so set to the total cloud fraction)
+          CFRAVG=1.-(1.-CFRACL(I,J))*(1.-CFRACM(I,J))*(1.-CFRACH(I,J))
+          ACFRST(I,J)=ACFRST(I,J)+CFRAVG
+          NCFRST(I,J)=NCFRST(I,J)+1
+        ENDIF
+!--- Flip 3D cloud fractions in the vertical and save time
+        LML=LMH(I,J)
+        DO L=1,LML
+          LL=LML-L+1+LVL(I,J)
+          CLDFRA(I,L,J)=MAX(CCMID(I,LL),CSMID(I,LL))
+        ENDDO
+      ENDDO      !-- I index
+!***
+!***  THIS ROW IS FINISHED. GO TO NEXT
+!***
+!                        *********************
+  700                          CONTINUE
+!                        *********************
+!----------------------------------------------------------------------
+!***
+!***  CALLS TO RADIATION THIS TIME STEP ARE COMPLETE.
+!***
+!----------------------------------------------------------------------
+
+      END SUBROUTINE CLOUDFRACTION
+!
+
 
 !----------------------------------------------------------------------
 !

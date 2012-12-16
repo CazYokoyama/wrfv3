@@ -2727,6 +2727,12 @@ CONTAINS
 
    ENDIF
 
+!JACK - OUTPUT DESIRED INFO TO STDOUT
+!      CALL jackout(                                                &
+!     &   GSW,GLW                                                   &
+!     & ,ims,ime, jms,jme, kms,kme                                  &
+!     &   )
+
    END SUBROUTINE surface_driver
 
 !-------------------------------------------------------------------------
@@ -4657,6 +4663,420 @@ HFX_SEA, LH_SEA, QFX_SEA, QGH_SEA, QSFC_SEA, TSK_SEA,  &
    END SUBROUTINE get_local_ice_tsk
 
 !=======================================================================
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!-----------------------------------------------------------------------------
+!  START OF ROUTINES NEEDED FOR 5m WIND CALC
+!-----------------------------------------------------------------------------
+!JACK - alter SFCLAY routine to give velocity at arbitrary level at gridpoint
+!JACK   by utilizing "10m" wind variable
+   SUBROUTINE SFCLAY1Djack( zagl, Uagl,Vagl,                      &
+                     UX,VX,T1D,                      &
+                     QV1D,P1D,dz8w1d,                &
+                     CP,G,ROVCP,R,XLV,PSFCPA,PBLH, &
+                     ZNT,UST,MAVAIL, MOL,      &
+                     XLAND,HFX,QFX,TSK,                            &
+                     DX,             &
+                     SVP1,SVP2,SVP3,SVPT0,EP1,EP2, KARMAN )
+!-------------------------------------------------------------------
+      IMPLICIT NONE
+!-------------------------------------------------------------------
+!jack - following were arguments but calc internally & would be  output so use local value to avoid propagating upstream
+      REAL   ::   RMOL, ZOL, REGIME,PSIM,PSIH, &
+                 TH2,T2,Q2, QSFC, WSPD,BR, FLHC,FLQC,QGH, CPM,           &
+                 GZ1oZ0,                                                 &
+                 zagl,Uagl,Vagl
+      REAL,     PARAMETER     ::        XKA=2.4E-5
+      REAL,     INTENT(IN )   ::        SVP1,SVP2,SVP3,SVPT0
+      REAL,     INTENT(IN )   ::        EP1,EP2,KARMAN,    &
+            UX, VX,  T1D, QV1D, P1D, dz8w1d, PSFCPA, PBLH, &
+            MOL, ZNT, MAVAIL, &
+            XLAND, TSK, HFX, QFX, UST, &
+            CP,G,ROVCP,R,XLV, &
+            DX
+!jack - moved these from  module_sf_sfclay.F
+      REAL    , PARAMETER ::  VCONVC=1.
+! LOCAL VARS
+      REAL    ::  ZA, THVX,ZQKL, ZQKLP1, THX,QX, PSIH2, PSIM2, PSIH10, PSIM10, &
+                  GZ2OZ0, GZ10OZ0, RHOX,GOVRTH, TGDSA, SCR3,SCR4, THGB, PSFC
+      INTEGER ::  N,I,K,KK,L,NZOL,NK,NZOL2,NZOL10
+      REAL    ::  PL,THCON,TVCON,E1
+      REAL    ::  ZL,TSKV,DTHVDZ,DTHVM,VCONV,RZOL,RZOL2,RZOL10,ZOL2,ZOL10
+      REAL    ::  DTG,PSIX,USTM,DTTHX,PSIX10,PSIT,PSIT2,PSIQ,PSIQ2
+      REAL    ::  FLUXC,VSGD 
+!jack - redefined to prevent output
+      REAL    :: USTagl
+!-------------------------------------------------------------------
+
+! PSFC cmb
+         PSFC=PSFCPA/1000.
+!----CONVERT GROUND TEMPERATURE TO POTENTIAL TEMPERATURE:  
+        TGDSA=TSK                                    
+! PSFC cmb
+        THGB=TSK*(100./PSFC)**ROVCP                
+    5 CONTINUE                                               
+!-----DECOUPLE FLUX-FORM VARIABLES TO GIVE U,V,T,THETA,THETA-VIR.,
+!     T-VIR., QV, AND QC AT CROSS POINTS AND AT KTAU-1.  
+   10 CONTINUE                                                     
+!.....SCR3(I,K) STORE TEMPERATURE,                           
+!     SCR4(I,K) STORE VIRTUAL TEMPERATURE.                                       
+! PL cmb
+         PL=P1D/1000.
+         SCR3=T1D                                                   
+         THCON=(100./PL)**ROVCP                                                 
+         THX=SCR3*THCON                                               
+         SCR4=SCR3                                                    
+         THVX=THX                                                     
+         QX=0.                                                             
+   30 CONTINUE                                                                 
+         QGH=0.                                                                
+         FLHC=0.                                                               
+         FLQC=0.                                                               
+         CPM=CP                                                                
+!     IF(IDRY.EQ.1)GOTO 80                                                   
+         QX=QV1D                                                    
+         TVCON=(1.+EP1*QX)                                      
+         THVX=THX*TVCON                                               
+         SCR4=SCR3*TVCON                                              
+   50 CONTINUE                                                                 
+        E1=SVP1*EXP(SVP2*(TGDSA-SVPT0)/(TGDSA-SVP3))                       
+        QSFC=EP2*E1/(PSFC-E1)                                                 
+! QGH CHANGED TO USE LOWEST-LEVEL AIR TEMP CONSISTENT WITH MYJSFC CHANGE
+! Q2SAT = QGH IN LSM
+        E1=SVP1*EXP(SVP2*(T1D-SVPT0)/(T1D-SVP3))                       
+        QGH=EP2*E1/(PSFC-E1)                                                 
+        CPM=CP*(1.+0.8*QX)                                   
+   60 CONTINUE                                                                   
+   80 CONTINUE
+!-----COMPUTE THE HEIGHT OF FULL- AND HALF-SIGMA LEVELS ABOVE GROUND             
+!     LEVEL, AND THE LAYER THICKNESSES.                                          
+        ZQKLP1=0.
+        RHOX=PSFC*1000./(R*SCR4)                                       
+   90 CONTINUE                                                                   
+           ZQKL=dz8w1d+ZQKLP1
+  110 CONTINUE                                                                 
+         ZA=0.5*(ZQKL+ZQKLP1)                                        
+  120 CONTINUE                                                                 
+        GOVRTH=G/THX                                                    
+  160 CONTINUE                                                                   
+!-----CALCULATE BULK RICHARDSON NO. OF SURFACE LAYER, ACCORDING TO               
+!     AKB(1976), EQ(12).                                                         
+        GZ1OZ0=ALOG(ZA/ZNT)                                        
+        GZ2OZ0=ALOG(2./ZNT)                                        
+        GZ10OZ0=ALOG(zagl/ZNT)                                        
+        IF((XLAND-1.5).GE.0)THEN                                            
+          ZL=ZNT                                                            
+        ELSE                                                                     
+          ZL=0.01                                                                
+        ENDIF                                                                    
+        WSPD=SQRT(UX*UX+VX*VX)                        
+        TSKV=THGB*(1.+EP1*QSFC*MAVAIL)                     
+        DTHVDZ=(THVX-TSKV)                                                 
+!  Convective velocity scale Vc and subgrid-scale velocity Vsg
+!       VCONV = 0.25*sqrt(g/tskv*pblh*dthvm)
+        fluxc = max(hfx/rhox/cp                    &
+              + ep1*tskv*qfx/rhox,0.)
+        VCONV = vconvc*(g/tgdsa*pblh*fluxc)**.33
+!       IF(-DTHVDZ.GE.0)THEN
+!         DTHVM=-DTHVDZ
+!       ELSE
+!         DTHVM=0.
+!       ENDIF
+!       VCONV = max(vconv,VCONVC*SQRT(DTHVM))
+! VCONV comes from Beljaars only
+        VSGD = 0.32 * (max(dx/5000.-1.,0.))**.33
+        WSPD=SQRT(WSPD*WSPD+VCONV*VCONV+vsgd*vsgd)
+        WSPD=AMAX1(WSPD,0.1)
+        BR=GOVRTH*ZA*DTHVDZ/(WSPD*WSPD)                        
+!  IF PREVIOUSLY UNSTABLE, DO NOT LET INTO REGIMES 1 AND 2
+        IF(MOL.LT.0.)BR=AMIN1(BR,0.0)
+        RMOL=-GOVRTH*DTHVDZ*ZA*KARMAN
+  260 CONTINUE                                                                   
+
+!JACK - section goes to statement 320
+!-----DIAGNOSE BASIC PARAMETERS FOR THE APPROPRIATED STABILITY CLASS:            
+!     THE STABILITY CLASSES ARE DETERMINED BY BR (BULK RICHARDSON NO.)           
+!     AND HOL (HEIGHT OF PBL/MONIN-OBUKHOV LENGTH).                              
+!     CRITERIA FOR THE CLASSES ARE AS FOLLOWS:                                   
+!        1. BR .GE. 0.2;                                                         
+!               REPRESENTS NIGHTTIME STABLE CONDITIONS (REGIME=1),               
+!        2. BR .LT. 0.2 .AND. BR .GT. 0.0;                                       
+!               REPRESENTS DAMPED MECHANICAL TURBULENT CONDITIONS                
+!               (REGIME=2),                                                      
+!        3. BR .EQ. 0.0                                                          
+!               REPRESENTS FORCED CONVECTION CONDITIONS (REGIME=3),              
+!        4. BR .LT. 0.0                                                          
+!               REPRESENTS FREE CONVECTION CONDITIONS (REGIME=4).                
+        IF(BR.LT.0.)GOTO 310                                                  
+!-----CLASS 1; STABLE (NIGHTTIME) CONDITIONS:                                    
+        IF(BR.LT.0.2)GOTO 270                                                 
+        REGIME=1.                                                           
+        PSIM=-10.*GZ1OZ0                                                   
+!    LOWER LIMIT ON PSI IN STABLE CONDITIONS                                     
+        PSIM=AMAX1(PSIM,-10.)                                              
+        PSIH=PSIM                                                          
+        PSIM10=zagl/ZA*PSIM
+        PSIM10=AMAX1(PSIM10,-10.)                               
+        PSIH10=PSIM10                                          
+        PSIM2=2./ZA*PSIM
+        PSIM2=AMAX1(PSIM2,-10.)                              
+        PSIH2=PSIM2                                         
+!       1.0 over Monin-Obukhov length
+        IF(UST.LT.0.01)THEN
+           RMOL=BR*GZ1OZ0 !ZA/L
+        ELSE
+           RMOL=KARMAN*GOVRTH*ZA*MOL/(UST*UST) !ZA/L
+        ENDIF
+        RMOL=AMIN1(RMOL,9.999) ! ZA/L
+        RMOL = RMOL/ZA !1.0/L
+        GOTO 320                                                                 
+!-----CLASS 2; DAMPED MECHANICAL TURBULENCE:                                     
+  270   IF(BR.EQ.0.0)GOTO 280                                                 
+        REGIME=2.                                                           
+        PSIM=-5.0*BR*GZ1OZ0/(1.1-5.0*BR)                             
+!    LOWER LIMIT ON PSI IN STABLE CONDITIONS                                     
+        PSIM=AMAX1(PSIM,-10.)                                              
+!.....AKB(1976), EQ(16).                                                         
+        PSIH=PSIM                                                          
+        PSIM10=zagl/ZA*PSIM
+        PSIM10=AMAX1(PSIM10,-10.)                               
+        PSIH10=PSIM10                                          
+        PSIM2=2./ZA*PSIM
+        PSIM2=AMAX1(PSIM2,-10.)                              
+        PSIH2=PSIM2                                         
+        ! Linear form: PSIM = -0.5*ZA/L; e.g, see eqn 16 of
+        ! Blackadar, Modeling the nocturnal boundary layer, Preprints,
+        ! Third Symposium on Atmospheric Turbulence Diffusion and Air Quality,
+        ! Raleigh, NC, 1976
+        ZOL = BR*GZ1OZ0/(1.00001-5.0*BR)
+        if ( ZOL .GT. 0.5 ) then ! linear form ok
+           ! Holtslag and de Bruin, J. App. Meteor 27, 689-704, 1988;
+           ! see also, Launiainen, Boundary-Layer Meteor 76,165-179, 1995
+           ! Eqn (8) of Launiainen, 1995
+           ZOL = ( 1.89*GZ1OZ0 + 44.2 ) * BR*BR    &
+                + ( 1.18*GZ1OZ0 - 1.37 ) * BR
+           ZOL=AMIN1(ZOL,9.999)
+        end if
+        ! 1.0 over Monin-Obukhov length
+        RMOL= ZOL/ZA
+        GOTO 320                                                                 
+!-----CLASS 3; FORCED CONVECTION:                                                
+  280   REGIME=3.                                                           
+        PSIM=0.0                                                              
+        PSIH=PSIM                                                          
+        PSIM10=0.                                                   
+        PSIH10=PSIM10                                           
+        PSIM2=0.                                                  
+        PSIH2=PSIM2                                           
+        IF(UST.LT.0.01)THEN                                                 
+          ZOL=BR*GZ1OZ0                                               
+        ELSE                                                                     
+          ZOL=KARMAN*GOVRTH*ZA*MOL/(UST*UST) 
+        ENDIF                                                                    
+        RMOL = ZOL/ZA  
+        GOTO 320                                                                 
+!-----CLASS 4; FREE CONVECTION:                                                  
+  310   CONTINUE                                                                 
+        REGIME=4.                                                           
+        IF(UST.LT.0.01)THEN                                                 
+          ZOL=BR*GZ1OZ0                                               
+        ELSE                                                                     
+          ZOL=KARMAN*GOVRTH*ZA*MOL/(UST*UST)
+        ENDIF                                                                    
+        ZOL10=zagl/ZA*ZOL                                    
+        ZOL2=2./ZA*ZOL                                     
+        ZOL=AMIN1(ZOL,0.)                                              
+        ZOL=AMAX1(ZOL,-9.9999)                                         
+        ZOL10=AMIN1(ZOL10,0.)                                          
+        ZOL10=AMAX1(ZOL10,-9.9999)                                    
+        ZOL2=AMIN1(ZOL2,0.)                                          
+        ZOL2=AMAX1(ZOL2,-9.9999)                                    
+        NZOL=INT(-ZOL*100.)                                                 
+        RZOL=-ZOL*100.-NZOL                                                 
+        NZOL10=INT(-ZOL10*100.)                                        
+        RZOL10=-ZOL10*100.-NZOL10                                     
+        NZOL2=INT(-ZOL2*100.)                                        
+        RZOL2=-ZOL2*100.-NZOL2                                      
+!jack - PSIMTB,PSIHTB were saved arrays from initialization, here made into functions
+        PSIM=PSIMTB(NZOL)+RZOL*(PSIMTB(NZOL+1)-PSIMTB(NZOL))                  
+        PSIH=PSIHTB(NZOL)+RZOL*(PSIHTB(NZOL+1)-PSIHTB(NZOL))                  
+        PSIM10=PSIMTB(NZOL10)+RZOL10*(PSIMTB(NZOL10+1)-PSIMTB(NZOL10))                                                    
+        PSIH10=PSIHTB(NZOL10)+RZOL10*(PSIHTB(NZOL10+1)-PSIHTB(NZOL10))
+        PSIM2=PSIMTB(NZOL2)+RZOL2*(PSIMTB(NZOL2+1)-PSIMTB(NZOL2))    
+        PSIH2=PSIHTB(NZOL2)+RZOL2*(PSIHTB(NZOL2+1)-PSIHTB(NZOL2))   
+!---LIMIT PSIH AND PSIM IN THE CASE OF THIN LAYERS AND HIGH ROUGHNESS            
+!---  THIS PREVENTS DENOMINATOR IN FLUXES FROM GETTING TOO SMALL                 
+!       PSIH=AMIN1(PSIH,0.9*GZ1OZ0)                                     
+!       PSIM=AMIN1(PSIM,0.9*GZ1OZ0)                                     
+        PSIH=AMIN1(PSIH,0.9*GZ1OZ0)
+        PSIM=AMIN1(PSIM,0.9*GZ1OZ0)
+        PSIH2=AMIN1(PSIH2,0.9*GZ2OZ0)
+        PSIM10=AMIN1(PSIM10,0.9*GZ10OZ0)
+        RMOL = ZOL/ZA  
+  320 CONTINUE                                                                   
+!-----COMPUTE THE FRICTIONAL VELOCITY:                                           
+!     ZA(1982) EQS(2.60),(2.61).                                                 
+        DTG=THX-THGB                                                   
+        PSIX=GZ1OZ0-PSIM                                                   
+        PSIX10=GZ10OZ0-PSIM10
+!     LOWER LIMIT ADDED TO PREVENT LARGE FLHC IN SOIL MODEL
+!     ACTIVATES IN UNSTABLE CONDITIONS WITH THIN LAYERS OR HIGH Z0
+        PSIT=AMAX1(GZ1OZ0-PSIH,2.)
+        IF((XLAND-1.5).GE.0)THEN                                            
+          ZL=ZNT                                                            
+        ELSE                                                                     
+          ZL=0.01                                                                
+        ENDIF                                                                    
+        PSIQ=ALOG(KARMAN*UST*ZA/XKA+ZA/ZL)-PSIH   
+        PSIT2=GZ2OZ0-PSIH2                                     
+        PSIQ2=ALOG(KARMAN*UST*2./XKA+2./ZL)-PSIH2                                   
+! TO PREVENT OSCILLONS AVERAGE WITH OLD VALUE 
+!jack - redefined to prevent output of new ust
+!original        UST=0.5*UST+0.5*KARMAN*WSPD/PSIX                                             
+        USTagl=0.5*UST+0.5*KARMAN*WSPD/PSIX                                             
+        Uagl=UX*PSIX10/PSIX                                    
+        Vagl=VX*PSIX10/PSIX                                   
+        return
+  END SUBROUTINE SFCLAY1Djack
+!jack - had to convert what was 2 saved arrays to functions
+      REAL FUNCTION PSIMTB( N )
+        INTEGER                  ::   N
+        REAL                     ::   ZOLN,X
+        ZOLN=-FLOAT(N)*0.01
+        X=(1-16.*ZOLN)**0.25
+        PSIMTB = 2*ALOG(0.5*(1+X))+ALOG(0.5*(1+X*X))- &
+                2.*ATAN(X)+2.*ATAN(1.)
+      END FUNCTION PSIMTB
+      REAL FUNCTION PSIHTB( N )
+        INTEGER                  ::   N
+        REAL                     ::   ZOLN,Y
+        ZOLN=-FLOAT(N)*0.01
+        Y=(1-16*ZOLN)**0.5
+        PSIHTB = 2*ALOG(0.5*(1+Y))
+      END FUNCTION PSIHTB
+!-----------------------------------------------------------------------------
+!  END OF ROUTINES NEEDED FOR 5m WIND CALC
+!-----------------------------------------------------------------------------
+
+!JACK - SFCFLXOUT: OUTPUT SURFACE FLUX INFO TO STDOUT
+      SUBROUTINE jackout( ITIMESTEP,                                    &
+       INEST, JULDAY, GMT,XTIME,                                        &
+       GSW,GLW,                                                 &
+       GRDFLX,HFX,QFX,LH,ALBEDO,EMISS,                             &
+       T2,Q2,TSK,                                               &
+       T_PHY,P8W,RHO,                                           &
+       ims,ime, jms,jme, kms,kme                                &
+!following needed for 5m wind calc
+               ,U_PHY,V_PHY,   &
+                QV_CURR,          &
+                P_PHY,dz8w,   &
+                PSFC,PBLH,  &
+                ZNT,UST,MAVAIL, MOL,  &
+                XLAND,  &
+                DX   &
+!4test            ,U10,V10   &
+        )
+!-----------------------------------------------------------------------------
+!  THIS SECTION NEEDED FOR 5m WIND CALC
+       USE module_model_constants
+!-----------------------------------------------------------------------------
+      IMPLICIT NONE
+      INTEGER :: ITIMESTEP, INEST, JULDAY
+      REAL, INTENT(IN)  ::  GMT,XTIME
+      REAL, DIMENSION( ims:ime, jms:jme ), INTENT(IN) ::  GSW, GLW,      &
+           GRDFLX,HFX,QFX,LH, ALBEDO,EMISS,                              &
+           T2,Q2,TSK                                                    
+      REAL, DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN) ::  T_PHY, P8W, RHO
+      INTEGER :: ims , ime , jms , jme , kms , kme 
+!-----------------------------------------------------------------------------
+!  THIS SECTION NEEDED FOR 5m WIND CALC
+!      ARGUMENT VARS for SFCLAY1Djack
+       REAL, DIMENSION( ims:ime, kms:kme, jms:jme ), INTENT(IN )::     &
+                U_PHY,V_PHY,   &
+                QV_CURR,                &
+                P_PHY,dz8w
+       REAL, DIMENSION( ims:ime, jms:jme ), INTENT(IN )::             &
+                PSFC,PBLH,            &
+                ZNT,UST,MAVAIL, MOL,  &
+                XLAND
+       REAL, INTENT(IN ) ::  DX     
+       REAL  ::  Uagl,Vagl, WSagl,WDagl
+!4test       REAL, DIMENSION( ims:ime, jms:jme ), INTENT(IN )::   U10,V10         
+!-----------------------------------------------------------------------------
+      REAL, PARAMETER :: SIGMA = 5.67E-8
+      REAL, PARAMETER ::   latvap = 2.501e6                           
+      REAL, PARAMETER ::   zeroCkelvin = 273.15     
+      INTEGER iout,jout
+      INTEGER, SAVE :: iter
+      REAL GMTHR, LWEMIS,CALCSOILFLX,VBHFX, SWdown,RADnet,TURBFLXup, T2c,TSKc,T1c, Q2gm,P2,ESAT,RHpct,DEWPTc
+      REAL x, csat0,csat1,csat2,csat3,csat4,csat5,csat6
+      data iter/0/
+      data csat0,csat1,csat2,csat3,csat4,csat5,csat6/6.107799961,4.436518521e-01,1.428945805e-02,2.650648471e-04,3.031240396e-06,2.034080948e-08,6.136820929e-11/
+!!! set grid location - Reading, UK (GB grid2) AtmObs@51.442,-0.938=>gridpt=30.71,13.21=(31,13)  Uboatclub@51.440,-0.972=>gridpt=30.51,13.22=(31,13) atlas=>51.47,-0.98=>gridpt=30.5+.69,13.5-=(31,13)  
+      iout = 31
+      jout = 13
+!-----------------------------------------------------------------------------
+!  THIS SECTION NEEDED FOR 5m WIND CALC
+       CALL SFCLAY1Djack( 5.,uagl,vagl,                                      &
+!4test       CALL SFCLAY1Djack( 10.,uagl,vagl,                                      &
+                U_PHY(IOUT,1,JOUT),V_PHY(IOUT,1,JOUT),T_PHY(IOUT,1,JOUT),   &
+                QV_CURR(IOUT,1,JOUT),                                          &
+                P_PHY(IOUT,1,JOUT),dz8w(IOUT,1,JOUT),   &
+                cp,g,rcp,r_d,xlv,PSFC(iout,jout),PBLH(iout,jout),  &
+                ZNT(iout,jout),UST(iout,jout),MAVAIL(iout,jout), MOL(iout,jout),  &
+                XLAND(iout,jout),HFX(iout,jout),QFX(iout,jout),TSK(iout,jout),    &
+                DX,     &
+                svp1,svp2,svp3,svpt0,ep_1,ep_2, karman )
+!4test       print *,'WIND U,V=',uagl,vagl, ' 10mWind= ',U10(iout,jout),V10(iout,jout)
+!-----------------------------------------------------------------------------
+!!! calculate needed terms
+      iter = iter +1
+      GMTHR = GMT + XTIME/60.
+      LWEMIS = SIGMA * EMISS(iout,jout) * TSK(iout,jout)**4
+      RADnet = GSW(iout,jout) +GLW(iout,jout) -LWEMIS
+!vapor contrib to buoyancy heat flux = cp*rho * 0.61*Theta*QFX
+      VBHFX = cp*(P_PHY(iout,1,jout)/(r_d*T_PHY(iout,1,jout)))* 0.61*T_PHY(iout,1,jout)*((P_PHY(iout,1,jout)/p1000mb)**-rcp)* QFX(iout,jout)
+!latentheatflux      LHFX = LATVAP* QFX(iout,jout)
+      TURBFLXup = ( HFX(iout,jout) + LH(iout,jout) )
+      CALCSOILFLX = RADnet -TURBFLXup
+      SWdown = GSW(iout,jout) / (1.-ALBEDO(iout,jout))
+      T2c = T2(iout,jout) - zeroCkelvin
+      TSKc = TSK(iout,jout) - zeroCkelvin
+      T1c = T_PHY(iout,1,jout) - zeroCkelvin
+      Q2gm = 1000.* Q2(iout,jout)
+! est press at 2m
+      P2 = P8W(iout,1,jout) - RHO(iout,1,jout)*9.8*2.0
+! saturation vapor pressure over liquid water esat (millibars) given the temperature t (celsius)
+! from lowe, paul r.,1977: JAM 16, p100-103 (1977) - obtained from ncarg ncl fortran thermo functions
+!        ESATmb = csat0+T2c*(csat1+T2c*(csat2+T2c*(csat3+T2c*(csat4+T2c*(csat5+csat6*T2c)))))
+      ESAT = 100.*(csat0+T2c*(csat1+T2c*(csat2+T2c*(csat3+T2c*(csat4+T2c*(csat5+csat6*T2c))))))
+      if (ESAT.lt.0.) ESAT = 0.
+! relative humidty from w=mixing ratio[kg/kg], p=pressure[Pa]
+! obtained from ncarg ncl fortran thermo functions
+      RHpct = 100.*(Q2(iout,jout)*(P2-0.378*ESAT)/(0.622*ESAT))
+!   dew point (celsius) given temperature (celsius) & relative humidity (%)
+!   processing of u.s. rawinsonde data and is referenced in parry, h. - obtained from ncarg ncl fortran thermo functions
+      x = 1.-0.01*RHpct
+      DEWPTc = T2c - (14.55+0.114*T2c)*x+((2.5+0.007*T2c)*x)**3+(15.9+0.117*T2c)*x**14
+      WSagl = sqrt( Uagl*Uagl + Vagl*Vagl )
+      WDagl = (atan2(Uagl,Vagl)+3.1415926)*57.29578
+      if(WDagl.gt.360.)WDagl=WDagl-360.
+!!! print
+      if ( iter .eq. 1 ) then
+        print 6000, JULDAY, INEST,iout,jout
+ 6000   format ('SFCFLXOUT  JULDAY=',i4, ' GRIDPT=',i2,i3,i3)
+      end if
+       print 6100, iter, itimestep, GMTHR,                              &
+         GSW(iout,jout),GLW(iout,jout),                                  &
+         LWEMIS,GRDFLX(iout,jout),CALCSOILFLX,                           &
+         SWdown, RADnet, TURBFLXup,                                     &
+         HFX(iout,jout),LH(iout,jout),VBHFX, ALBEDO(iout,jout),EMISS(iout,jout),  &
+         T2c,TSKc, T1c, Q2gm, RHpct, DEWPTc, WSagl,WDagl 
+ 6100  format ('SFCFLXOUT:', i4,i5,f8.3, 11f7.1, 2f6.3, 3f7.2, f7.3,f6.1,f7.2, f8.1,f6.0 )
+!--- 6100  format ('SFCFLXOUT:',i2,i4,i4,1x,f8.3,1p,20e12.4 )
+       return
+       END SUBROUTINE jackout
+
+
 !=======================================================================
 
 END MODULE module_surface_driver

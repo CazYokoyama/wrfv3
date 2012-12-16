@@ -268,7 +268,7 @@ state    real   ht_coarse       ij     misc        1   -     r                - 
 
 
 # TKE
-state    real   tke            ikj     dyn_em      2         -       r        "tke"          "TURBULENCE KINETIC ENERGY"     "m2 s-2"
+state    real   tke            ikj     dyn_em      2         -       rh        "tke"          "TURBULENCE KINETIC ENERGY"     "m2 s-2"
 i1       real   tke_tend       ikj     dyn_em      1         -      
 
 # Pressure and Density
@@ -851,9 +851,9 @@ state    real    CUPPT           ij     misc        1         -      r        "C
 state    real   rswtoa           ij     misc        1         -      -
 state    real   rlwtoa           ij     misc        1         -      -
 state    real   czmean           ij     misc        1         -      -
-state    real   cfracl           ij     misc        1         -      -
-state    real   cfracm           ij     misc        1         -      -
-state    real   cfrach           ij     misc        1         -      -
+state    real   cfracl           ij     misc        1         -      ih       "CFRACL"               "ETA 2D CLOUD FRACTION - LOW "  ""
+state    real   cfracm           ij     misc        1         -      ih       "CFRACM"               "ETA 2D CLOUD FRACTION - MID "  ""
+state    real   cfrach           ij     misc        1         -      ih       "CFRACH"               "ETA 2D CLOUD FRACTION - HIGH"  ""
 state    real   acfrst           ij     misc        1         -      -
 state integer   ncfrst           ij     misc        1         -      -
 state    real   acfrcv           ij     misc        1         -      -
@@ -1165,9 +1165,9 @@ state integer  STEPRA          -        misc        1         -      r        "S
                                                 
 state    real  RUBLTEN         ikj      misc        1         -      r        "RUBLTEN"               "COUPLED X WIND TENDENCY DUE TO PBL PARAMETERIZATION"  "Pa m s-2"
 state    real  RVBLTEN         ikj      misc        1         -      r        "RVBLTEN"               "COUPLED Y WIND TENDENCY DUE TO PBL PARAMETERIZATION"  "Pa m s-2"
-state    real  RTHBLTEN        ikj      misc        1         -      r        "RTHBLTEN"              "COUPLED THETA TENDENCY DUE TO PBL PARAMETERIZATION"   "Pa K s-1"
-state    real  RQVBLTEN        ikj      misc        1         -      r        "RQVBLTEN"              "COUPLED Q_V TENDENCY DUE TO PBL PARAMETERIZATION"     "Pa kg kg-1 s-1"
-state    real  RQCBLTEN        ikj      misc        1         -      r        "RQCBLTEN"              "COUPLED Q_C TENDENCY DUE TO PBL PARAMETERIZATION"     "Pa kg kg-1 s-1"
+state    real  RTHBLTEN        ikj      misc        1         -      rh       "RTHBLTEN"              "COUPLED THETA TENDENCY DUE TO PBL PARAMETERIZATION"   "Pa K s-1"
+state    real  RQVBLTEN        ikj      misc        1         -      rh       "RQVBLTEN"              "COUPLED Q_V TENDENCY DUE TO PBL PARAMETERIZATION"     "Pa kg kg-1 s-1"
+state    real  RQCBLTEN        ikj      misc        1         -      rh       "RQCBLTEN"              "COUPLED Q_C TENDENCY DUE TO PBL PARAMETERIZATION"     "Pa kg kg-1 s-1"
 state    real  RQIBLTEN        ikj      misc        1         -      r        "RQIBLTEN"              "COUPLED Q_I TENDENCY DUE TO PBL PARAMETERIZATION"     "Pa kg kg-1 s-1"      
 
 # For Noah-MP

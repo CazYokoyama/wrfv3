@@ -1,0 +1,17 @@
+type = continuous
+signed = no
+projection = regular_ll
+dx = 0.33333333
+dy = 0.33333333
+known_x = 1.0
+known_y = 1.0
+known_lat = -89.833333
+known_lon = 0.1666667
+scale_factor = 0.02
+wordsize = 4
+tile_x = 1080
+tile_y = 540
+tile_z = 1
+tile_bdr=0
+units="m"
+description="stdev of subgrid-scale orographic height"

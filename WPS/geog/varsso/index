@@ -1,0 +1,16 @@
+type = continuous
+signed = yes
+projection = regular_ll
+dx = 0.00833333
+dy = 0.00833333
+known_x = 1.0
+known_y = 1.0
+known_lat = -59.99583
+known_lon = -179.99583
+wordsize = 4
+tile_x = 600
+tile_y = 600
+tile_z = 1
+tile_bdr=0
+units="meters2 MSL"
+description="Variance of Subgrid Scale Orography"

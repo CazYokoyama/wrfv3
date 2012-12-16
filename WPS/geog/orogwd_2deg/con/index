@@ -1,0 +1,17 @@
+type = continuous
+signed = no
+projection = regular_ll
+dx = 2.0
+dy = 2.0
+known_x = 1.0
+known_y = 1.0
+known_lat = -89.0
+known_lon = 1.0
+scale_factor = 0.025
+wordsize = 2
+tile_x = 180
+tile_y = 90
+tile_z = 1
+tile_bdr=0
+units=" "
+description="orographic convexity"

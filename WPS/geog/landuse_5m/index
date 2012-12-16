@@ -1,0 +1,17 @@
+type=continuous
+category_min=1
+category_max=24
+projection=regular_ll
+dx=0.08333333
+dy=0.08333333
+known_x=1.0
+known_y=1.0
+known_lat=-89.95833
+known_lon=-179.95833
+wordsize=1
+tile_x=240
+tile_y=240
+tile_z=24
+tile_bdr=3
+units="category"
+description="24-category USGS landuse"

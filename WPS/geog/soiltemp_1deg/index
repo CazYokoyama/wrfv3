@@ -1,0 +1,17 @@
+type=continuous
+projection=regular_ll
+missing_value=0.0
+dx=1.0
+dy=1.0
+known_x=1.0
+known_y=1.0
+known_lat=-89.5
+known_lon=-179.5
+wordsize=2
+tile_x=180
+tile_y=180
+tile_z=1
+tile_bdr=3
+scale_factor=0.01
+units="Kelvin"
+description="Annual mean deep soil temperature"

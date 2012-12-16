@@ -1,0 +1,16 @@
+type = continuous
+signed = yes
+projection = regular_ll
+dx = 0.08333333
+dy = 0.08333333
+known_x = 1.0
+known_y = 1.0
+known_lat = -89.95833
+known_lon = -179.95833
+wordsize = 2
+tile_x = 240
+tile_y = 240
+tile_z = 1
+tile_bdr=3
+units="meters MSL"
+description="Topography height"

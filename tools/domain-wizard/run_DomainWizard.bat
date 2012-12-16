@@ -1,0 +1,1 @@
+java -Xmx675m -jar WRFDomainWizard.jar

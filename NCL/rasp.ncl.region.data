@@ -1,0 +1,200 @@
+#############################################################################################
+#############  RASP PLOT INFORMATION - to be read by rasp.ncl  ##############################
+#############################################################################################
+### FORMAT FOR EACH REGION:
+###   1st line: ===MY_REGION_NAME (matching that used in rasp.pl, spaces not allowed)
+###   2nd line: units (american/celsius/metric)
+###   then (optional) sounding location(s) of 4 lines each: (1) "sounding#" (where # is an integer) (2) sounding id (spaces allowed) (3) latitude (decimal degrees,S=negative) (4) longitude (decimal degrees, W=negative)
+###   ( sounding integers normally increase sequentially but need not - numbers must not contain a "+" sign )
+### IF RUN REGION IS NOT IN THIS FILE, THEN DEFAULT UNITS USED AND NO SOUNDINGS ARE PLOTTED
+#############################################################################################
+===PANOCHE
+american
+sounding1
+HOLLISTER uses airport lat/lon 
+36.893 
+-121.410  
+sounding2
+PANOCHE
+36.62  moved g2 location right 2 gridpts so more representative of valley
+-120.84  moved g2 location right 2 gridpts so more representative of valley
+sounding3
+EL4
+36.34  moved g2 location down 1 gridpt to mid-plateau
+-120.76  moved g2 location down 1 gridpt to mid-plateau
+===PANOCHE_ALT
+american
+sounding1
+HOLLISTER uses airport lat/lon 
+36.893 
+-121.410  
+sounding2
+PANOCHE
+36.62  moved g2 location right 2 gridpts so more representative of valley
+-120.84  moved g2 location right 2 gridpts so more representative of valley
+sounding3
+EL4
+36.34  moved g2 location down 1 gridpt to mid-plateau
+-120.76  moved g2 location down 1 gridpt to mid-plateau
+===WILLIAMS
+american
+sounding1
+WILLIAMS 
+39.164 
+-122.132
+sounding2
+GOAT MT 
+39.260 
+-122.715
+===WILLIAMS_ALT
+american
+sounding1
+WILLIAMS 
+39.164 
+-122.132
+sounding2
+GOAT MT 
+39.260 
+-122.715
+===CANV
+american
+===SW_SOUTHAFRICA
+celsius
+sounding1
+WORCESTER
+-33.650
+19.400
+===SW_SOUTHAFRICA+1
+celsius
+sounding1
+WORCESTER
+-33.650
+19.400
+===SW_SOUTHAFRICA+2
+celsius
+sounding1
+WORCESTER
+-33.650
+19.400
+===GREATBRITAIN
+celsius
+sounding1
+Dartmoor
+50.5
+-4.0
+sounding2
+Cirencester
+51.7
+-2.0
+sounding3
+Herstmonceaux
+50.9
+0.3
+sounding4
+Newtown
+52.5
+-3.0
+sounding5
+BuryStEdmunds
+52.3
+0.7
+sounding6
+Nottingham
+53.0
+-1.2
+sounding7
+Harrogate
+54.0
+-1.5
+sounding8
+Cheviots
+55.5
+-2.2
+sounding9
+Callander
+56.2
+-4.2
+sounding10
+Aboyne
+57.1
+-2.8
+===GOVCUP
+american
+sounding1
+BLAIRSTOWN
+40.971
+-74.997
+sounding2
+POTTSTOWN
+40.332
+-75.247
+===GROVELAND
+american
+sounding1
+GROVELAND
+28.464
+-81.910
+===GENERIC_US
+american
+===MOJAVE
+american
+sounding1
+Calif.City
+35.150
+-118.026
+sounding2
+EdwardsAFB
+34.906
+-117.884
+sounding3
+PalmdaleAFB
+34.629
+-118.085
+sounding4
+ElMirage
+34.624
+-117.609
+sounding5
+CrystalSoaring
+34.485
+-117.834
+===SISKIYOU
+american
+===NORTHPLAINS
+american
+sounding1
+KHIO
+45.535
+-122.942
+sounding2
+PDX
+45.543
+-122.383
+sounding3
+HaggMicrowave
+45.544722
+-123.381389
+sounding4
+McMinnville
+45.194444
+-123.135833 
+sounding5
+White Radar
+44.923333
+-123.573333
+sounding6
+Marys Peak
+44.508333
+-123.55
+sounding7
+Eugene
+44.123333
+-123.218611
+sounding8
+Independence
+44.866667
+-123.198333
+sounding9
+Mist
+45.985556
+-123.246667

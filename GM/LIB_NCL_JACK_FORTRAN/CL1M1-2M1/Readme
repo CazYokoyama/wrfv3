@@ -1,0 +1,18 @@
+Files are marked as:
+
+nocuda - version that is not using cuda
+avx - compiled for Intel AVX capable processors (newest corei7 and Xeon) ,
+ 	will crash otherwise with "Illegal Instruction".
+sse2 - optimized for sse2, it means - for all
+
+
+So, you need one from both, ncl_jack and wrf_user, on your linking path
+  LD_LIBRARY_PATH is variable to add a directory to
+
+
+
+Setup for Nvidia:
+those are linked against libcudart.so.4, so you need cuda version 4.0
+ 5.0 is out, but there is some library incompatibility
+ it may work if you symlink your libcudart.so.5 to libcudart.so.4
+

@@ -2,8 +2,7 @@ procedure doHeader(param, title, Region, gridspacingkm, FMT, tail)
 begin
 
 	;;; FIND INITIATION MODEL INFO from (need tr of octal character to remove single quotes!)
-	cmd = "grep 'INIT_ROOT' ../../WRF/WRFSI/domains/" + Region + "/static/wrfsi.nl | sed 's/^.*= *//;s/, *$//' | tr -d '\047'"
-	initmodel = systemfunc( cmd )
+	initmodel = "ETA"
 
 	;;; CREATE EXPANSIVE 3rd TITLE LINE FROM GRID INFO
 	if(param .eq. "wstar_bsratio" .or. param .eq. "bsratio_bsratio") then

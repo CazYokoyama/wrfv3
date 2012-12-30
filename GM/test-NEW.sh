@@ -80,7 +80,8 @@ fi
 # export ENV_NCL_FILENAME=/tmp/Alan/wrfout_d02_2012-04-15_20:00:00
 
 # But don't change this - unless you want to explicitly specify it
-export ENV_NCL_REGIONNAME=`echo $ENV_NCL_FILENAME | sed -e 's/.*RASP\///' | sed -e 's/\/.*//'`
+# comes from environment variable
+#export ENV_NCL_REGIONNAME=`echo $ENV_NCL_FILENAME | sed -e 's/.*RASP\///' | sed -e 's/\/.*//'`
 
 # Build ENV_NCL_ID (as far as possible)
 FILEDATE=`echo $ENV_NCL_FILENAME | cut -d _ -f 3`

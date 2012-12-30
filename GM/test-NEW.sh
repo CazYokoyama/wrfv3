@@ -177,6 +177,6 @@ then
 fi
 
 # Finally!!
-$NCL_COMMAND -n -p wrf2gm.ncl > TEST/`echo $ENV_NCL_FILENAME | cut -d "_" -f 4 | cut -d ":" -f 1`.txt
+$NCL_COMMAND -n -p wrf2gm.ncl
 
 exit 

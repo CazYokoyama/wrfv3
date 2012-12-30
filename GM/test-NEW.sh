@@ -134,11 +134,11 @@ bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:\
 dwcrit: wstar:bsratio:sfcshf:zblcl:zblcldif:\
 zblclmask:blcwbase:press1000:press950:press850:press700:press500:\
 bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:\
-rain1:wrf=HGT:wstar_bsratio:bsratio_bsratio:\
+wrf=HGT:wstar_bsratio:bsratio_bsratio:\
 blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\
 hglider:stars:\
 sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
-sounding8:sounding9:sounding10:sounding11:sounding12:sounding13:sounding14:sounding15"
+sounding8:sounding9"
 
 
 # Overide Params with cmd-line args

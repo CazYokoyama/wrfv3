@@ -37,6 +37,9 @@ export NCARG_ROOT=/usr
 # You may need to specify the NCL_COMMAND, if not on your $PATH
 NCL_COMMAND=$NCARG_ROOT/bin/ncl
 
+# The location of high resolution coastlines. The default location, /usr/lib/ncarg/database/rangs does not work.
+export NCARG_RANGS=/usr/local/lib/ncarg/database/rangs
+
 # Specify Output Image Size
 export GMIMAGESIZE=1600
 # export GMIMAGESIZE=800

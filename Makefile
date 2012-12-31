@@ -1,4 +1,5 @@
 export LOCATION=NORTHPLAINS
+
 export BASEDIR=$(shell pwd)
 export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
 export GETVAR=DRJACK
@@ -41,13 +42,22 @@ blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\
 hglider:stars:\
 sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
 sounding8:sounding9"
+export location=`echo ${LOCATION} | tr [A-Z] [a-z]`
+SCP = scp
+SCP_OPTION = -q
+SCP_DEST = caztech:/var/www/html/RASP/GM/${location}
 
-all:
+all: copy_to_website
+
+png:
 	@echo ${ENV_NCL_FILENAME}:
 	@echo ${ENV_NCL_DATIME}:
 	@echo ${ENV_NCL_ID}:
 	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
 	cd GM; ${NCL_COMMAND} -n -p wrf2gm.ncl
+
+copy_to_website: png
+	$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST)
 
 clean:
 	@echo ${}:

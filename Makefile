@@ -49,15 +49,13 @@ SCP_DEST = caztech:/var/www/html/RASP/GM/${location}
 
 all: copy_to_website
 
-png:
-	@echo ${ENV_NCL_FILENAME}:
-	@echo ${ENV_NCL_DATIME}:
-	@echo ${ENV_NCL_ID}:
+${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${FILEDATE}:
 	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
 	cd GM; ${NCL_COMMAND} -n -p wrf2gm.ncl
+	touch ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${FILEDATE}
 
-copy_to_website: png
+copy_to_website: ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${FILEDATE}
 	$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST)
 
 clean:
-	@echo ${}:
+	@$(RM) -rf ${ENV_NCL_OUTDIR}

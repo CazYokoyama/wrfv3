@@ -1,10 +1,11 @@
-export LOCATION=NORTHPLAINS
+export flying_field=northplains
 
 export BASEDIR=$(shell pwd)
 export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
 export GETVAR=DRJACK
-export ENV_NCL_REGIONNAME=${LOCATION}
-export ENV_NCL_OUTDIR=${BASEDIR}/domains/${LOCATION}/out
+export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
+export ENV_NCL_REGIONNAME=${FLYING_FIELD}
+export ENV_NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/out
 export PROJECTION=Lambert
 
 export NCARG_ROOT=/usr
@@ -42,7 +43,6 @@ blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\
 hglider:stars:\
 sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
 sounding8:sounding9"
-export location=`echo ${LOCATION} | tr [A-Z] [a-z]`
 SCP = scp
 SCP_OPTION = -q
 SCP_DEST = caztech:/var/www/html/RASP/GM/${location}

@@ -28,9 +28,6 @@ export file_creat_hr=$(shell ls -l --time-style="+%H" ${ENV_NCL_FILENAME} | cut 
 export file_creat_mn=$(shell ls -l --time-style="+%M" ${ENV_NCL_FILENAME} | cut -d " " -f 6)
 export fcstperiodprt="\?\?"
 export ztime='????'
-export ENV_NCL_DATIME=$(shell echo Day= ${localyyyy} ${localmon} ${localday} ${localdow} \
-ValidLST= ${localhh}${localmin} ${localtimeid} ValidZ= ${filehh}${filemin} \
-Fcst= ${fcstperiodprt} Init= ${fcstperiodprt})
 export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~\(%02d%02dZ\)~Z~ %s %s %s %d ~Z75~[%shrFcst@%sz]~Z~" \
 ${localhh} ${localmin} ${localtimeid} ${filehh} ${filemin} ${localdow} ${localday} ${localmon} ${localyyyy} ${fcstperiodprt} ${ztime})
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:\

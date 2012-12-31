@@ -29,7 +29,7 @@ export ztime='????'
 export ENV_NCL_DATIME=$(shell echo Day= ${localyyyy} ${localmon} ${localday} ${localdow} \
 ValidLST= ${localhh}${localmin} ${localtimeid} ValidZ= ${filehh}${filemin} \
 Fcst= ${fcstperiodprt} Init= ${fcstperiodprt})
-export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s \~Z75\~\(%02d%02dZ\)~Z~ %s %s %s %d \~Z75\~[%shrFcst@%sz]\~Z\~" \
+export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~\(%02d%02dZ\)~Z~ %s %s %s %d ~Z75~[%shrFcst@%sz]~Z~" \
 ${localhh} ${localmin} ${localtimeid} ${filehh} ${filemin} ${localdow} ${localday} ${localmon} ${localyyyy} ${fcstperiodprt} ${ztime})
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:\
 bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:\
@@ -46,8 +46,8 @@ all:
 	@echo ${ENV_NCL_FILENAME}:
 	@echo ${ENV_NCL_DATIME}:
 	@echo ${ENV_NCL_ID}:
-	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p $ENV_NCL_OUTDIR
-#	cd GM; ./test-NEW.sh ${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_12:00:00
+	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
+	cd GM; ${NCL_COMMAND} -n -p wrf2gm.ncl
 
 clean:
 	@echo ${}:

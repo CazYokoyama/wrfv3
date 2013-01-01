@@ -1,3 +1,4 @@
+export ENV_NCL_FILENAME=$(NCL_FILENAME)
 export FILEDATE=$(shell echo $(ENV_NCL_FILENAME) | cut -d _ -f 3)
 export FILETIME=$(shell echo $(ENV_NCL_FILENAME) | cut -d _ -f 4)
 export localhh=$(shell echo ${FILETIME} | cut -d : -f 1)

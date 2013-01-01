@@ -28,10 +28,10 @@ sounding8:sounding9"
 
 all: 
 	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
-	$(MAKE) -C GM ENV_NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_12:00:00 all
-	$(MAKE) -C GM ENV_NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_13:00:00 all
+	$(MAKE) -C GM NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_12:00:00 all
+	$(MAKE) -C GM NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_13:00:00 all
 
 clean:
-	$(MAKE) -C GM ENV_NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_12:00:00 clean
+	$(MAKE) -C GM NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_12:00:00 clean
 
 

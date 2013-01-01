@@ -26,13 +26,16 @@ sounding8:sounding9"
 #wrf=HGT:wstar_bsratio:bsratio_bsratio:\ # wrf=HGT produce an error
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 
-all: 1800 2100
+all: 1800 2100 2400
 
 1800:
 	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_18:00:00 all
 
 2100:
 	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_21:00:00 all
+
+2400:
+	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-17_00:00:00 all
 
 clean:
 	$(RM) -r ${NCL_OUTDIR}

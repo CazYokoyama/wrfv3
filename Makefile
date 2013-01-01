@@ -22,14 +22,15 @@ blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\
 hglider:stars:\
 sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
 sounding8:sounding9"
-#wrf=HGT:wstar_bsratio:bsratio_bsratio:\
+#wrf=HGT:wstar_bsratio:bsratio_bsratio:\ # wrf=HGT produce an error
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # gm convert: Request did not return an image.
 
-export ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_12:00:00
-
 all: 
-	$(MAKE) -C GM all
+	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
+	$(MAKE) -C GM ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_12:00:00 all
+	$(MAKE) -C GM ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_13:00:00 all
 
 clean:
-	$(MAKE) -C GM clean
+	$(MAKE) -C GM ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_12:00:00 clean
+
 

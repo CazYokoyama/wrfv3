@@ -19,7 +19,7 @@ ${localhh} ${localmin} ${localtimeid} ${filehh} ${filemin} ${localdow} ${localda
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}/${localhh}_${localmin}
 SCP = scp
 SCP_OPTION = -q
-SCP_DEST = caztech:/var/www/html/RASP/GM/${location}
+SCP_DEST = caztech:/var/www/html/RASP/GM/${flying_field}
 
 all: copy_to_website
 

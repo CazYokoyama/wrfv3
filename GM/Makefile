@@ -1,6 +1,6 @@
 export flying_field=northplains
 
-export BASEDIR=$(shell pwd)
+export BASEDIR=$(shell pwd)/..
 export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
 export GETVAR=DRJACK
 export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
@@ -47,12 +47,12 @@ ${localhh} ${localmin} ${localtimeid} ${filehh} ${filemin} ${localdow} ${localda
 
 all: copy_to_website
 
-${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${FILEDATE}:
+${ENV_NCL_OUTDIR}/png_created_${localyyyy}-${FILEDATE}_${localhh}_${localmin}:
 	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
-	cd GM; ${NCL_COMMAND} -n -p wrf2gm.ncl
-	touch ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${FILEDATE}
+	cd GM; ${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl
+	touch ${ENV_NCL_OUTDIR}/png_created_${localyyyy}-${FILEDATE}_${localhh}_${localmin}
 
-copy_to_website: ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${FILEDATE}
+copy_to_website: ${ENV_NCL_OUTDIR}/png_created_${localyyyy}-${FILEDATE}_${localhh}_${localmin}
 	$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST)
 
 clean:

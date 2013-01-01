@@ -1,5 +1,9 @@
 export flying_field=northplains
 
+WRFOUT_1800Z = wrfout_d02_2012-12-16_18:00:00
+WRFOUT_2100Z = wrfout_d02_2012-12-16_21:00:00
+WRFOUT_2400Z = wrfout_d02_2012-12-17_00:00:00
+
 export BASEDIR=$(shell pwd)
 export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
 export GETVAR=DRJACK
@@ -26,16 +30,16 @@ sounding8:sounding9"
 #wrf=HGT:wstar_bsratio:bsratio_bsratio:\ # wrf=HGT produce an error
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 
-all: 1800 2100 2400
+all: 1800Z 2100Z 2400Z
 
-1800:
-	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_18:00:00 all
+1800Z:
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1800Z) all
 
-2100:
-	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_21:00:00 all
+2100Z:
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2100Z) all
 
-2400:
-	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-17_00:00:00 all
+2400Z:
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all
 
 clean:
 	$(RM) -r ${NCL_OUTDIR}

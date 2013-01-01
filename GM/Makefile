@@ -24,7 +24,7 @@ SCP_DEST = caztech:/var/www/html/RASP/GM/${flying_field}
 all: copy_to_website
 
 ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${localhh}_${localmin}:
-	rm -rf ${ENV_NCL_OUTDIR}; mkdir ${ENV_NCL_OUTDIR}
+	rm -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >${FILEDATE}_${localhh}_${localmin}.log
 	touch ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${localhh}_${localmin}
 

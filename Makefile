@@ -27,9 +27,8 @@ sounding8:sounding9"
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 
 all: 
-	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
 	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_12:00:00 all
 	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_13:00:00 all
 
 clean:
-	$(MAKE) -C GM WRFOUT_NAME=wrfout_d02_2012-12-16_12:00:00 clean
+	$(RM) -r ${NCL_OUTDIR}

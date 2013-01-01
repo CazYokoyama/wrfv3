@@ -23,7 +23,7 @@ hglider:stars:\
 sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
 sounding8:sounding9"
 #wrf=HGT:wstar_bsratio:bsratio_bsratio:\ # wrf=HGT produce an error
-#zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # gm convert: Request did not return an image.
+#zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 
 all: 
 	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}

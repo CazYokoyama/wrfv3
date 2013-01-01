@@ -16,6 +16,7 @@ export fcstperiodprt="\?\?"
 export ztime='????'
 export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~\(%02d%02dZ\)~Z~ %s %s %s %d ~Z75~[%shrFcst@%sz]~Z~" \
 ${localhh} ${localmin} ${localtimeid} ${filehh} ${filemin} ${localdow} ${localday} ${localmon} ${localyyyy} ${fcstperiodprt} ${ztime})
+export ENV_NCL_OUTDIR=${NCL_OUTDIR}/${localhh}_${localmin}
 SCP = scp
 SCP_OPTION = -q
 SCP_DEST = caztech:/var/www/html/RASP/GM/${location}
@@ -23,6 +24,7 @@ SCP_DEST = caztech:/var/www/html/RASP/GM/${location}
 all: copy_to_website
 
 ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${localhh}_${localmin}:
+	rm -rf ${ENV_NCL_OUTDIR}; mkdir ${ENV_NCL_OUTDIR}
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >${FILEDATE}_${localhh}_${localmin}.log
 	touch ${ENV_NCL_OUTDIR}/png_created_${FILEDATE}_${localhh}_${localmin}
 

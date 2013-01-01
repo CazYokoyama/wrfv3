@@ -7,6 +7,7 @@ export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
 export ENV_NCL_REGIONNAME=${FLYING_FIELD}
 export ENV_NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/out
 export PROJECTION=Lambert
+export WRFOUT_DIR=${BASEDIR}/WRFV3/run
 
 export NCARG_ROOT=/usr
 export NCL_COMMAND=${NCARG_ROOT}/bin/ncl
@@ -27,10 +28,10 @@ sounding8:sounding9"
 
 all: 
 	@$(RM) -rf ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
-	$(MAKE) -C GM ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_12:00:00 all
-	$(MAKE) -C GM ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_13:00:00 all
+	$(MAKE) -C GM ENV_NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_12:00:00 all
+	$(MAKE) -C GM ENV_NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_13:00:00 all
 
 clean:
-	$(MAKE) -C GM ENV_NCL_FILENAME=${BASEDIR}/WRFV3/run/wrfout_d02_2012-12-16_12:00:00 clean
+	$(MAKE) -C GM ENV_NCL_FILENAME=${WRFOUT_DIR}/wrfout_d02_2012-12-16_12:00:00 clean
 
 

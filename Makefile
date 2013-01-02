@@ -58,7 +58,7 @@ $(WRF_RUN)/wrf_done: $(WRF_RUN)/wrfinput_d02
 	touch $(WRF_RUN)/wrf_done
 
 real: $(WRF_RUN)/wrfinput_d02
-$(WRF_RUN)/wrfinput_d02:
+$(WRF_RUN)/wrfinput_d02: metgrid
 	cd $(WRF_RUN); \
 	$(RM) met_em.d0*; \
 	ln -s ${BASEDIR}/domains/${FLYING_FIELD}/met_em.d0* .; \
@@ -74,6 +74,14 @@ $(WRF_RUN)/wrfinput_d02:
 	sed -i -e "/num_metgrid_levels/s/27/40/" namelist.input; \
 	../main/real.exe
 
+metgrid: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
+${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc
+	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
+	$(RM) met_em.d0?.*:00:00.nc metgrid_done; \
+	${BASEDIR}/WPS/metgrid.exe && \
+	touch metgrid_done
+
 clean:
+	cd ${BASEDIR}/domains/${FLYING_FIELD}; $(RM) met_em.d0?.*:00:00.nc metgrid_done 
 	$(RM) $(WRF_RUN)/wrf_done $(WRF_RUN)/wrfout_d*
 	$(RM) -r ${NCL_OUTDIR}

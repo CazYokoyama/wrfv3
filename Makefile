@@ -95,6 +95,7 @@ ${BASEDIR}/domains/${FLYING_FIELD}/ungrib_done: ${BASEDIR}/grib/nam.t00z.awip3d1
 	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
 	ln -sf ../../WPS/ungrib/Variable_Tables/Vtable.NAM Vtable; \
 	../../WPS/link_grib.csh ../../grib/; \
+	git checkout namelist.wps; \
 	sed -i -e "/start_date/s/2012-12-16_12:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_today)_12:00:00/g" namelist.wps; \
 	sed -i -e "/end_date/s/2012-12-17_00:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00/g" namelist.wps; \
 	${BASEDIR}/WPS/ungrib.exe && \

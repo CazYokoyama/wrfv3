@@ -40,8 +40,9 @@ utc_mon=12
 utc_today=16
 utc_tomorrow=17
 
-all: 1800Z 2100Z 2400Z
+all: ncl
 
+ncl: 1800Z 2100Z 2400Z
 1800Z: $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1800Z) all
 
@@ -51,10 +52,12 @@ all: 1800Z 2100Z 2400Z
 2400Z:  $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all
 
+wrf: $(WRF_RUN)/wrf_done
 $(WRF_RUN)/wrf_done: $(WRF_RUN)/wrfinput_d02
 	cd $(WRF_RUN); ulimit -s unlimited; ../main/wrf.exe && \
 	touch $(WRF_RUN)/wrf_done
 
+real: $(WRF_RUN)/wrfinput_d02
 $(WRF_RUN)/wrfinput_d02:
 	cd $(WRF_RUN); \
 	$(RM) met_em.d0*; \

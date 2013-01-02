@@ -31,6 +31,15 @@ sounding8:sounding9"
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 WRF_RUN = ${BASEDIR}/WRFV3/run
 
+#utc_yyyy=$(shell date --utc +%Y)
+#utc_mon=$(shell date --utc +%m)
+#utc_today=$(shell date --utc +%d)
+#utc_tomorrow=$(shell date --utc --date=tomorrow +%d)
+utc_yyyy=2012
+utc_mon=12
+utc_today=16
+utc_tomorrow=17
+
 all: 1800Z 2100Z 2400Z
 
 1800Z: $(WRF_RUN)/wrf_done
@@ -43,8 +52,24 @@ all: 1800Z 2100Z 2400Z
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all
 
 $(WRF_RUN)/wrf_done: $(WRF_RUN)/wrfinput_d02
-	cd $(WRF_RUN); ../main/wrf.exe && \
+	cd $(WRF_RUN); ulimit -s unlimited; ../main/wrf.exe && \
 	touch $(WRF_RUN)/wrf_done
+
+$(WRF_RUN)/wrfinput_d02:
+	cd $(WRF_RUN); \
+	$(RM) met_em.d0*; \
+	ln -s ${BASEDIR}/domains/${FLYING_FIELD}/met_em.d0* .; \
+	rm -f namelist.input; \
+	cp ${BASEDIR}/domains/${FLYING_FIELD}/namelist.input .; \
+	sed -i -e "/start_year/s/2000/$(utc_yyyy)/g" namelist.input; \
+	sed -i -e "/start_month/s/01/$(utc_mon)/g" namelist.input; \
+	sed -i -e "/start_day/s/24/$(utc_today)/g" namelist.input; \
+	sed -i -e "/end_year/s/2000/$(utc_yyyy)/g" namelist.input; \
+	sed -i -e "/end_month/s/01/$(utc_mon)/g" namelist.input; \
+	sed -i -e "/end_day/s/25/$(utc_tomorrow)/g" namelist.input; \
+	sed -i -e "/end_hour/s/12/00/g" namelist.input; \
+	sed -i -e "/num_metgrid_levels/s/27/40/" namelist.input; \
+	../main/real.exe
 
 clean:
 	$(RM) $(WRF_RUN)/wrf_done $(WRF_RUN)/wrfout_d*

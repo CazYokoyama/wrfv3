@@ -81,7 +81,13 @@ ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/domains/${FLYING_FIE
 	${BASEDIR}/WPS/metgrid.exe && \
 	touch metgrid_done
 
+geogrid: ${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc
+${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc: ${BASEDIR}/domains/${FLYING_FIELD}/namelist.wps
+	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
+	$(RM) geo_em.d0?.nc; \
+	${BASEDIR}/WPS/geogrid.exe
+
 clean:
-	cd ${BASEDIR}/domains/${FLYING_FIELD}; $(RM) met_em.d0?.*:00:00.nc metgrid_done 
+	cd ${BASEDIR}/domains/${FLYING_FIELD}; $(RM) geo_em.d0?.nc met_em.d0?.*:00:00.nc metgrid_done 
 	$(RM) $(WRF_RUN)/wrf_done $(WRF_RUN)/wrfout_d*
 	$(RM) -r ${NCL_OUTDIR}

@@ -29,17 +29,23 @@ sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
 sounding8:sounding9"
 #wrf=HGT:wstar_bsratio:bsratio_bsratio:\ # wrf=HGT produce an error
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
+WRF_RUN = ${BASEDIR}/WRFV3/run
 
 all: 1800Z 2100Z 2400Z
 
-1800Z:
+1800Z: $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1800Z) all
 
-2100Z:
+2100Z:  $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2100Z) all
 
-2400Z:
+2400Z:  $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all
 
+$(WRF_RUN)/wrf_done: $(WRF_RUN)/wrfinput_d02
+	cd $(WRF_RUN); ../main/wrf.exe && \
+	touch $(WRF_RUN)/wrf_done
+
 clean:
+	$(RM) $(WRF_RUN)/wrf_done $(WRF_RUN)/wrfout_d*
 	$(RM) -r ${NCL_OUTDIR}

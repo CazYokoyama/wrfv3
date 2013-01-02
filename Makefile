@@ -1,9 +1,5 @@
 export flying_field=northplains
 
-WRFOUT_1800Z = wrfout_d02_2012-12-16_18:00:00
-WRFOUT_2100Z = wrfout_d02_2012-12-16_21:00:00
-WRFOUT_2400Z = wrfout_d02_2012-12-17_00:00:00
-
 export BASEDIR=$(shell pwd)
 export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
 export GETVAR=DRJACK
@@ -31,14 +27,14 @@ sounding8:sounding9"
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 WRF_RUN = ${BASEDIR}/WRFV3/run
 
-#utc_yyyy=$(shell date --utc +%Y)
-#utc_mon=$(shell date --utc +%m)
-#utc_today=$(shell date --utc +%d)
-#utc_tomorrow=$(shell date --utc --date=tomorrow +%d)
-utc_yyyy=2012
-utc_mon=12
-utc_today=16
-utc_tomorrow=17
+utc_yyyy=$(shell date --utc +%Y)
+utc_mon=$(shell date --utc +%m)
+utc_today=$(shell date --utc +%d)
+utc_tomorrow=$(shell date --utc --date=tomorrow +%d)
+
+WRFOUT_1800Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_18:00:00
+WRFOUT_2100Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_21:00:00
+WRFOUT_2400Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00
 
 all: ncl
 
@@ -94,6 +90,8 @@ ${BASEDIR}/domains/${FLYING_FIELD}/ungrib_done: ${BASEDIR}/grib/nam.t00z.awip3d1
 	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
 	ln -sf ../../WPS/ungrib/Variable_Tables/Vtable.NAM Vtable; \
 	../../WPS/link_grib.csh ../../grib/; \
+	sed -i -e "/start_date/s/2012-12-16_12:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_today)_12:00:00/g" namelist.wps; \
+	sed -i -e "/end_date/s/2012-12-17_00:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00/g" namelist.wps; \
 	${BASEDIR}/WPS/ungrib.exe && \
 	touch ungrib_done
 

@@ -57,6 +57,7 @@ wrf: $(WRF_RUN)/wrf_done
 $(WRF_RUN)/wrf_done: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
 	$(MAKE) -C $(WRF_RUN) wrf_done
 
+wps: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
 ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} metgrid_done
 

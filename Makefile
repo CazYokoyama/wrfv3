@@ -84,7 +84,7 @@ ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/domains/${FLYING_FIE
 	touch metgrid_done
 
 geogrid: ${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc
-${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc: ${BASEDIR}/domains/${FLYING_FIELD}/namelist.wps
+${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc:
 	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
 	$(RM) geo_em.d0?.nc; \
 	${BASEDIR}/WPS/geogrid.exe

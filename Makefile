@@ -57,31 +57,8 @@ wrf: $(WRF_RUN)/wrf_done
 $(WRF_RUN)/wrf_done: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
 	$(MAKE) -C $(WRF_RUN) wrf_done
 
-metgrid: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
-${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc \
-						${BASEDIR}/domains/${FLYING_FIELD}/ungrib_done
-	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
-	$(RM) met_em.d0?.*:00:00.nc metgrid_done; \
-	${BASEDIR}/WPS/metgrid.exe && \
-	touch metgrid_done
-
-geogrid: ${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc
-${BASEDIR}/domains/${FLYING_FIELD}/geo_em.d02.nc:
-	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
-	$(RM) geo_em.d0?.nc; \
-	${BASEDIR}/WPS/geogrid.exe
-
-ungrib: ${BASEDIR}/domains/${FLYING_FIELD}/ungrib_done
-${BASEDIR}/domains/${FLYING_FIELD}/ungrib_done: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2 \
-						${BASEDIR}/domains/${FLYING_FIELD}/namelist.wps
-	cd ${BASEDIR}/domains/${FLYING_FIELD}; \
-	ln -sf ../../WPS/ungrib/Variable_Tables/Vtable.NAM Vtable; \
-	../../WPS/link_grib.csh ../../grib/; \
-	git checkout namelist.wps; \
-	sed -i -e "/start_date/s/2012-12-16_12:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_today)_12:00:00/g" namelist.wps; \
-	sed -i -e "/end_date/s/2012-12-17_00:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00/g" namelist.wps; \
-	${BASEDIR}/WPS/ungrib.exe && \
-	touch ungrib_done
+${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2
+	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} metgrid_done
 
 grib: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2
 ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
@@ -94,7 +71,6 @@ ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
 
 clean:
 	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2
-	cd ${BASEDIR}/domains/${FLYING_FIELD}; $(RM) ungrib_done FILE:* \
-		GRIBFILE.* geo_em.d0?.nc met_em.d0?.*:00:00.nc metgrid_done 
+	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean
 	$(RM) $(WRF_RUN)/wrf_done $(WRF_RUN)/wrfout_d*
 	$(RM) -r ${NCL_OUTDIR}

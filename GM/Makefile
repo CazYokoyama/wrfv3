@@ -34,4 +34,4 @@ copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 	$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST)
 
 clean:
-	@$(RM) -r ${ENV_NCL_OUTDIR}
+	@$(RM) -r ${ENV_NCL_OUTDIR} *~ *.log

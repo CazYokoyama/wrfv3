@@ -71,7 +71,7 @@ ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
 	$(WGET) $(WGET_OPTION) $(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d24.tm00.grib2;
 
 clean:
-	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2
+	$(MAKE) -C $(WRF_RUN) clean
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean
-	$(RM) $(WRF_RUN)/wrf_done $(WRF_RUN)/wrfout_d*
+	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2
 	$(RM) -r ${NCL_OUTDIR}

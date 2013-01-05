@@ -7,7 +7,7 @@ metgrid_done: geo_em.d01.nc geo_em.d02.nc ungrib_done
 	grep -q COMPLETE metgrid.log && touch metgrid_done
 
 geogrid:  geo_em.d01.nc geo_em.d02.nc
- geo_em.d01.nc geo_em.d02.nc:
+geo_em.d01.nc geo_em.d02.nc:
 	$(RM) $@
 	../../WPS/geogrid.exe
 
@@ -22,4 +22,7 @@ ungrib_done: ../../grib/nam.t00z.awip3d12.tm00.grib2
 	grep -q COMPLETE ungrib.log && touch ungrib_done
 
 clean:
-	$(RM) ungrib_done FILE:* GRIBFILE.* geo_em.d0?.nc met_em.d0?.*:00:00.nc metgrid_done 
+	$(RM) *~ *.log
+	$(RM) FILE:* ungrib_done
+	$(RM) geo_em.d0?.nc
+	$(RM) met_em.d0?.*:00:00.nc metgrid_done

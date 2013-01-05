@@ -19,7 +19,7 @@ ungrib_done: ../../grib/nam.t00z.awip3d12.tm00.grib2
 	sed -i -e "/start_date/s/....-..-.._..:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_today)_12:00:00/g" namelist.wps
 	sed -i -e "/end_date/s/....-..-.._00:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00/g" namelist.wps
 	../../WPS/ungrib.exe
-	grep -q COMPLETE ungrib.log && touch ungrib_done
+	grep -q "Successful completion" ungrib.log && touch ungrib_done
 
 clean:
 	$(RM) *~ *.log

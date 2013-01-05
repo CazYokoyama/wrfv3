@@ -4,7 +4,7 @@ metgrid: metgrid_done
 metgrid_done: geo_em.d01.nc geo_em.d02.nc ungrib_done
 	$(RM) met_em.d0?.*:00:00.nc metgrid_done
 	../../WPS/metgrid.exe
-	grep -q COMPLETE metgrid.log && touch metgrid_done
+	grep -q "Successful completion" metgrid.log && touch metgrid_done
 
 geogrid:  geo_em.d01.nc geo_em.d02.nc
 geo_em.d01.nc geo_em.d02.nc:

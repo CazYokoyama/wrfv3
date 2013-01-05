@@ -21,4 +21,6 @@ wrfinput_d01 wrfinput_d02: ../../domains/${FLYING_FIELD}/metgrid_done
 	./real.exe
 
 clean:
-	$(RM) wrf_done wrfout_d* met_em.d0* namelist.input wrfinput_d*
+	$(RM) wrf_done wrfout_d*
+	$(RM) met_em.d0* namelist.input wrfinput_d*
+	$(RM) *~ *.log

@@ -74,4 +74,4 @@ clean:
 	$(MAKE) -C $(WRF_RUN) clean
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean
 	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2
-	$(RM) -r ${NCL_OUTDIR}
+	$(RM) -r ${NCL_OUTDIR} *~ *.log

@@ -3,7 +3,7 @@ all: wrf_done
 wrf: wrf_done
 wrf_done: wrfinput_d02
 	ulimit -s unlimited; \
-	./wrf.exe && touch wrf_done
+	./wrf.exe >wrf.log && touch wrf_done
 
 real: wrfinput_d01 wrfinput_d02
 wrfinput_d01 wrfinput_d02: ../../domains/${FLYING_FIELD}/metgrid_done

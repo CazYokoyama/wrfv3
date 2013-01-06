@@ -21,7 +21,8 @@ TIME_ID = ${FILEDATE}_$(shell echo ${FILETIME} | tr ":" "-")
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
 SCP = scp
 SCP_OPTION = -q
-SCP_DEST = caztech:/var/www/html/RASP/GM/${flying_field}
+SCP_DEST_SITE = caztech
+SCP_DEST_DIR = /var/www/html/RASP/GM/${flying_field}
 
 all: copy_to_website
 
@@ -31,7 +32,9 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID):
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
 copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST)
+	if ping -c1 -q $(SCP_DEST_SITE); then \
+		$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST_SITE):$(SCP_DEST_DIR); \
+	fi
 
 clean:
 	@$(RM) -r ${ENV_NCL_OUTDIR}

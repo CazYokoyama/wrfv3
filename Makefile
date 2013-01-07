@@ -18,7 +18,7 @@ bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:\
 dwcrit: wstar:bsratio:sfcshf:zblcl:zblcldif:\
 zblclmask:blcwbase:press1000:press950:press850:press700:press500:\
 bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:\
-wstar_bsratio:bsratio_bsratio:\
+rain1:wstar_bsratio:bsratio_bsratio:\
 blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\
 hglider:stars:\
 sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
@@ -75,8 +75,10 @@ ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
 	$(WGET) $(WGET_OPTION) \
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d24.tm00.grib2;
 
-clean:
+clean_grib_too: clean
 	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2
+
+clean:
 	$(MAKE) -C $(WRF_RUN) clean
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean
 	$(RM) -r ${NCL_OUTDIR}

@@ -16,7 +16,7 @@ export GMIMAGESIZE=1600
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:\
 bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:\
 dwcrit: wstar:bsratio:sfcshf:zblcl:zblcldif:\
-zblclmask:blcwbase:\
+zblclmask:blcwbase:press1000:press950:press850:press700:press500:\
 bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:\
 wstar_bsratio:bsratio_bsratio:\
 blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\

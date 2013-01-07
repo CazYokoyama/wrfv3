@@ -32,7 +32,7 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID):
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
 copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	if ping -c1 -q $(SCP_DEST_SITE); then \
+	if ping -qc1 $(SCP_DEST_SITE) >/dev/null; then \
 		$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST_SITE):$(SCP_DEST_DIR); \
 	fi
 

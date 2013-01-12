@@ -779,6 +779,16 @@ begin
                 opts_bg@mpRightCornerLonF   = lon_max
         else
                 if(Projection .eq. "Lambert" .or. Projection .eq. "LAMBERT" .or. Projection .eq. "lambert" ) then
+
+			lon_min = min(alon)
+			lon_max = max(alon)
+			lon_ctr = (lon_min + lon_max) / 2.0
+			lat_min = min(alat)
+			lat_max = max(alat)
+			lat_ctr = (lat_min + lat_max) / 2.0
+			print("Latitude Data: min=" + sprintf("%.7f", lat_min) + " max=" + sprintf("%.7f", lat_max) + " ctr=" + sprintf("%.7f", lat_ctr))
+			print("Longitude Data: min=" + sprintf("%.7f", lon_min) + " max=" + sprintf("%.7f", lon_max) + " ctr=" + sprintf("%.7f", lon_ctr))
+
                         opts_bg@mpProjection        = "LambertConformal"
                         opts_bg@mpLimitMode         = "Corners"             ; Set extent of map
                         opts_bg@mpLambertParallel1F = projlat1

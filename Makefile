@@ -23,8 +23,13 @@ export utc_mon=$(shell date --utc +%m)
 export utc_today=$(shell date --utc +%d)
 export utc_tomorrow=$(shell date --utc --date=tomorrow +%d)
 
+WRFOUT_1700Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_17:00:00
 WRFOUT_1800Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_18:00:00
+WRFOUT_1900Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_19:00:00
+WRFOUT_2000Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_20:00:00
 WRFOUT_2100Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_21:00:00
+WRFOUT_2200Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_22:00:00
+WRFOUT_2300Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_23:00:00
 WRFOUT_2400Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00
 
 WGET = /usr/bin/wget
@@ -34,12 +39,27 @@ GRIB_FTP_DIR = /pub/data/nccf/com/nam/prod
 
 all: ncl
 
-ncl: 1800Z 2100Z 2400Z
+ncl: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z
+1700Z: $(WRF_RUN)/wrf_done
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1700Z) all
+
 1800Z: $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1800Z) all
 
+1900Z: $(WRF_RUN)/wrf_done
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1900Z) all
+
+2000Z:  $(WRF_RUN)/wrf_done
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2000Z) all
+
 2100Z:  $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2100Z) all
+
+2200Z:  $(WRF_RUN)/wrf_done
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2200Z) all
+
+2300Z:  $(WRF_RUN)/wrf_done
+	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2300Z) all
 
 2400Z:  $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all

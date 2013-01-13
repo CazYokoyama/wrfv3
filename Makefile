@@ -13,16 +13,7 @@ export NCARG_ROOT=/usr
 export NCL_COMMAND=${NCARG_ROOT}/bin/ncl
 export NCARG_RANGS=/usr/local/lib/ncarg/database/rangs
 export GMIMAGESIZE=1600
-export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:\
-bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:\
-dwcrit: wstar:bsratio:sfcshf:zblcl:zblcldif:\
-zblclmask:blcwbase:press1000:press950:press850:press700:press500:\
-bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:\
-rain1:wstar_bsratio:bsratio_bsratio:\
-blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:\
-hglider:stars:\
-sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:\
-sounding8:sounding9"
+export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:dwcrit:wstar:bsratio:sfcshf:zblcl:zblcldif:zblclmask:blcwbase:press1000:press950:press850:press700:press500:bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:rain1:wstar_bsratio:bsratio_bsratio:blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:hglider:stars:sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:sounding8:sounding9"
 #wrf=HGT:wstar_bsratio:bsratio_bsratio:\ # wrf=HGT produce an error
 #zblclmask:blcwbase:press1000:press950:press850:press700:press500:\ # press*: gm convert: Request did not return an image.
 WRF_RUN = ${BASEDIR}/WRFV3/run

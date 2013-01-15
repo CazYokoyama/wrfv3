@@ -1,1 +1,7 @@
 namelist.input
+met_em.d*.nc
+wrfout_d*
+namelist.output
+*.log
+*_done
+wrf*_d??

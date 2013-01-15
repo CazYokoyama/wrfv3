@@ -1,10 +1,29 @@
 export ENV_NCL_FILENAME=${WRFOUT_DIR}/$(WRFOUT_NAME)
-export FILEDATE=$(shell echo $(ENV_NCL_FILENAME) | cut -d _ -f 3)
-export FILETIME=$(shell echo $(ENV_NCL_FILENAME) | cut -d _ -f 4)
-export localhh=$(shell echo ${FILETIME} | cut -d : -f 1)
+export FILEDATE=$(shell echo $(ENV_NCL_FILENAME) | cut -d_ -f3)
+export FILETIME=$(shell echo $(ENV_NCL_FILENAME) | cut -d_ -f4)
+utc_hh=$(shell date --date="${FILEDATE} ${FILETIME}" +%H)
+utc_day=$(shell date --date=${FILEDATE} +%-d)
+time_diff=$(shell date +%:::z)
+local_24=$(shell expr ${utc_hh} + ${time_diff} + 24)
+export localhh=$(shell \
+if [ ${local_24} -ge 24 ]; then \
+	expr ${local_24} - 24; \
+else \
+	echo ${local_24}; \
+fi)
+export localday=$(shell \
+if [ ${local_24} -ge 24 ]; then \
+	date --date=${FILEDATE} +%-d; \
+else \
+	date --date=yesterday${FILEDATE} +%-d; \
+fi)
+export localdow=$(shell \
+if [ ${local_24} -ge 24 ]; then \
+	date --date=${FILEDATE} +%a; \
+else \
+	date --date=yesterday${FILEDATE} +%a; \
+fi)
 export localmin=$(shell echo ${FILETIME} | cut -d : -f 2)
-export localdow=$(shell date -d ${FILEDATE} +%a)
-export localday=$(shell date -d ${FILEDATE} +%-d)
 export localmon=$(shell date -d ${FILEDATE} +%b)
 export localyyyy=$(shell date -d ${FILEDATE} +%Y)
 export localtimeid=$(shell date -d ${FILEDATE} +%Z)

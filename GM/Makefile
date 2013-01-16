@@ -27,15 +27,13 @@ export localmin=$(shell echo ${FILETIME} | cut -d : -f 2)
 export localmon=$(shell date -d ${FILEDATE} +%b)
 export localyyyy=$(shell date -d ${FILEDATE} +%Y)
 export localtimeid=$(shell date -d ${FILEDATE} +%Z)
-export filehh=$(shell date -u -d ${FILETIME} +%H)
-export filemin=$(shell date -u -d ${FILETIME} +%M)
-export file_creat_hr=$(shell ls -l --time-style="+%H" $(ENV_NCL_FILENAME) | cut -d " " -f 6)
-export file_creat_mn=$(shell ls -l --time-style="+%M" $(ENV_NCL_FILENAME) | cut -d " " -f 6)
-export fcstperiodprt="\?\?"
-export ztime='????'
+filehh = $(shell date -u -d ${FILETIME} +%H)
+filemin = $(shell date -u -d ${FILETIME} +%M)
+fcstperiodprt = $(shell expr ${localhh} + 24 - 16)
+ztime = 1600
 export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~(%02d%02dZ)~Z~ %s %s %s %d ~Z75~[%shrFcst@%sz]~Z~" \
-${localhh} ${localmin} ${localtimeid} ${filehh} ${filemin} ${localdow} ${localday} ${localmon} ${localyyyy} \
-${fcstperiodprt} ${ztime})
+${localhh} ${localmin} ${localtimeid} $(filehh) $(filemin) ${localdow} ${localday} ${localmon} ${localyyyy} \
+$(fcstperiodprt) $(ztime))
 TIME_ID = ${FILEDATE}_$(shell echo ${FILETIME} | tr ":" "-")
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
 SCP = scp

@@ -5,7 +5,7 @@ export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2
 export GETVAR=DRJACK
 export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
 export ENV_NCL_REGIONNAME=${FLYING_FIELD}
-export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/out
+export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart
 export PROJECTION=Lambert
 export WRFOUT_DIR=${BASEDIR}/WRFV3/run
 

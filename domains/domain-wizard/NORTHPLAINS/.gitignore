@@ -5,4 +5,3 @@ FILE:*
 GRIBFILE.*
 chart
 geo_em.d*.nc
-namelist.wps

@@ -19,6 +19,10 @@ ungrib_done: ../../grib/nam.t00z.awip3d12.tm00.grib2
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	sed -i -e "/start_date/s/....-..-.._..:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_today)_12:00:00/g" namelist.wps
 	sed -i -e "/end_date/s/....-..-.._00:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00/g" namelist.wps
+	sed -i -e "/opt_output_from_geogrid_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
+	sed -i -e "/opt_geogrid_tbl_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
+	sed -i -e "/opt_output_from_metgrid_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
+	sed -i -e "/opt_metgrid_tbl_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
 	../../WPS/ungrib.exe
 	grep -q "Successful completion" ungrib.log && touch ungrib_done
 

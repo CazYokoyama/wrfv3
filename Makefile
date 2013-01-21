@@ -6,7 +6,7 @@ export GETVAR=DRJACK
 export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
 export ENV_NCL_REGIONNAME=${FLYING_FIELD}
 export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart
-export PROJECTION=Lambert
+export PROJECTION=Mercator
 export WRFOUT_DIR=${BASEDIR}/WRFV3/run
 
 export NCARG_ROOT=/usr

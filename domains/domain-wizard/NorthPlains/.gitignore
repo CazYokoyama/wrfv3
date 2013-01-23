@@ -5,3 +5,4 @@ FILE:*
 GRIBFILE.*
 chart
 geo_em.d*.nc
+*.exitCode

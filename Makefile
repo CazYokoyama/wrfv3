@@ -16,19 +16,17 @@ export GMIMAGESIZE=1600
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:dwcrit:wstar:bsratio:sfcshf:zblcl:zblcldif:zblclmask:blcwbase:press1000:press950:press850:press700:press500:bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:rain1:wrf=HGT:wstar_bsratio:bsratio_bsratio:blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:hglider:stars:sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:sounding8:sounding9"
 WRF_RUN = ${BASEDIR}/WRFV3/run
 
-export utc_yyyy=$(shell date --utc +%Y)
-export utc_mon=$(shell date --utc +%m)
-export utc_today=$(shell date --utc +%d)
-export utc_tomorrow=$(shell date --utc --date=tomorrow +%d)
+export utc_today=$(shell date --utc +%Y%m%d)
+export utc_tomorrow=$(shell date --utc --date=tomorrow +%Y%m%d)
 
-WRFOUT_1700Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_17:00:00
-WRFOUT_1800Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_18:00:00
-WRFOUT_1900Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_19:00:00
-WRFOUT_2000Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_20:00:00
-WRFOUT_2100Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_21:00:00
-WRFOUT_2200Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_22:00:00
-WRFOUT_2300Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_23:00:00
-WRFOUT_2400Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00
+WRFOUT_1700Z = wrfout_d02_$(utc_today)_17:00:00
+WRFOUT_1800Z = wrfout_d02_$(utc_today)_18:00:00
+WRFOUT_1900Z = wrfout_d02_$(utc_today)_19:00:00
+WRFOUT_2000Z = wrfout_d02_$(utc_today)_20:00:00
+WRFOUT_2100Z = wrfout_d02_$(utc_today)_21:00:00
+WRFOUT_2200Z = wrfout_d02_$(utc_today)_22:00:00
+WRFOUT_2300Z = wrfout_d02_$(utc_today)_23:00:00
+WRFOUT_2400Z = wrfout_d02_$(utc_tomorrow)_00:00:00
 
 all: ncl
 

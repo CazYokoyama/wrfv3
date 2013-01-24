@@ -98,7 +98,7 @@ clean-wrf:
 clean-chart:
 	$(RM) -r ${NCL_OUTDIR}
 
-clean_grib_too: clean clean-grib
+clean-grib-too: clean clean-grib
 
-clean: clean-grib clean-wps clean-wrf clean-chart
+clean: clean-wps clean-wrf clean-chart
 	$(RM) -r *~ *.log

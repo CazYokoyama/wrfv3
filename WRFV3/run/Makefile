@@ -1,3 +1,10 @@
+utc_today_yyyy=$(shell date --utc +%Y)
+utc_today_mon=$(shell date --utc +%m)
+utc_today_date=$(shell date --utc +%d)
+utc_tomorrow_yyyy=$(shell date --utc --date=tomorrow +%Y)
+utc_tomorrow_mon=$(shell date --utc --date=tomorrow +%m)
+utc_tomorrow_date=$(shell date --utc --date=tomorrow +%d)
+
 all: wrf_done
 
 wrf: wrf_done
@@ -10,12 +17,12 @@ wrfinput_d01 wrfinput_d02: ../../domains/${FLYING_FIELD}/metgrid_done
 	$(RM) met_em.d0* namelist.input
 	ln -s ../../domains/${FLYING_FIELD}/met_em.d0* .
 	cp ../../domains/${FLYING_FIELD}/namelist.input .
-	sed -i -e "/start_year/s/....,/$(utc_yyyy),/g" namelist.input
-	sed -i -e "/start_month/s/..,/$(utc_mon),/g" namelist.input
-	sed -i -e "/start_day/s/..,/$(utc_today),/g" namelist.input
-	sed -i -e "/end_year/s/....,/$(utc_yyyy),/g" namelist.input
-	sed -i -e "/end_month/s/..,/$(utc_mon),/g" namelist.input
-	sed -i -e "/end_day/s/..,/$(utc_tomorrow),/g" namelist.input
+	sed -i -e "/start_year/s/....,/$(utc_today_yyyy),/g" namelist.input
+	sed -i -e "/start_month/s/..,/$(utc_today_mon),/g" namelist.input
+	sed -i -e "/start_day/s/..,/$(utc_today_date),/g" namelist.input
+	sed -i -e "/end_year/s/....,/$(utc_tomorrow_yyyy),/g" namelist.input
+	sed -i -e "/end_month/s/..,/$(utc_tomorrow_mon),/g" namelist.input
+	sed -i -e "/end_day/s/..,/$(utc_tomorrow_date),/g" namelist.input
 	sed -i -e "/end_hour/s/12/00/g" namelist.input
 	sed -i -e "/num_metgrid_levels/s/27/40/" namelist.input
 	./real.exe

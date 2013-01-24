@@ -30,11 +30,6 @@ WRFOUT_2200Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_22:00:00
 WRFOUT_2300Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_today)_23:00:00
 WRFOUT_2400Z = wrfout_d02_$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00
 
-WGET = /usr/bin/wget
-WGET_OPTION = -q
-GRIB_FTP_SITE = ftp://ftpprd.ncep.noaa.gov
-GRIB_FTP_DIR = /pub/data/nccf/com/nam/prod
-
 all: ncl
 
 ncl: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z
@@ -72,19 +67,7 @@ ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/grib/nam.t00z.awip3d
 
 grib: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2
 ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
-	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2; \
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d12.tm00.grib2; \
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d15.tm00.grib2; \
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d18.tm00.grib2; \
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d21.tm00.grib2; \
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d24.tm00.grib2; \
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d27.tm00.grib2;
+	$(MAKE) -C ${BASEDIR}/grib all
 
 clean-grib:
 	$(MAKE) -C ${BASEDIR}/grib clean

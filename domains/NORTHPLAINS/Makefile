@@ -15,7 +15,7 @@ ungrib: ungrib_done
 ungrib_done: ../../grib/nam.t00z.awip3d12.tm00.grib2
 	$(RM) Vtable FILE:*
 	ln -sf ../../WPS/ungrib/Variable_Tables/Vtable.NAM Vtable
-	../../WPS/link_grib.csh ../../grib/
+	../../WPS/link_grib.csh ../../grib/nam.t00z.awip3d
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	sed -i -e "/start_date/s/....-..-.._..:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_today)_12:00:00/g" namelist.wps
 	sed -i -e "/end_date/s/....-..-.._00:00:00/$(utc_yyyy)-$(utc_mon)-$(utc_tomorrow)_00:00:00/g" namelist.wps

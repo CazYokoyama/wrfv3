@@ -7,9 +7,8 @@ utc_today=$(shell date --utc +%Y%m%d)
 
 all: grib
 
-grib: nam.t00z.awip3d12.tm00.grib2
+grib: file_available nam.t00z.awip3d12.tm00.grib2 
 nam.t00z.awip3d12.tm00.grib2:
-	$(RM) nam.t00z.awip3d??.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d12.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
@@ -23,5 +22,8 @@ nam.t00z.awip3d12.tm00.grib2:
 	$(WGET) $(WGET_OPTION) \
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d27.tm00.grib2
 
+file_available:
+	@touch --date="`date --utc +%F` 00:00Z" $@
+
 clean:
-	$(RM) nam.t00z.awip3d??.tm00.grib2
+	$(RM) nam.t00z.awip3d??.tm00.grib2* file_available *~

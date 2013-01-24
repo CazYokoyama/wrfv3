@@ -87,7 +87,7 @@ ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_yyyy)$(utc_mon)$(utc_today)/nam.t00z.awip3d27.tm00.grib2;
 
 clean-grib:
-	cd ${BASEDIR}/grib; $(RM) nam.t00z.awip3d??.tm00.grib2
+	$(MAKE) -C ${BASEDIR}/grib clean
 
 clean-wps:
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean

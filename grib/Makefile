@@ -9,19 +9,19 @@ all: grib
 
 grib: nam.t00z.awip3d12.tm00.grib2
 nam.t00z.awip3d12.tm00.grib2:
-	$(RM) nam.t00z.awip3d??.tm00.grib2; \
+	$(RM) nam.t00z.awip3d??.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d12.tm00.grib2; \
+		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d12.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d15.tm00.grib2; \
+		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d15.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d18.tm00.grib2; \
+		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d18.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d21.tm00.grib2; \
+		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d21.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d24.tm00.grib2; \
+		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d24.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d27.tm00.grib2;
+		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d27.tm00.grib2
 
 clean:
 	$(RM) nam.t00z.awip3d??.tm00.grib2

@@ -14,20 +14,20 @@ wrf_done: wrfinput_d02
 
 real: wrfinput_d01 wrfinput_d02
 wrfinput_d01 wrfinput_d02: ../../domains/${FLYING_FIELD}/metgrid_done
-	$(RM) met_em.d0* namelist.input
-	ln -s ../../domains/${FLYING_FIELD}/met_em.d0* .
-	cp ../../domains/${FLYING_FIELD}/namelist.input .
-	sed -i -e "/start_year/s/....,/$(utc_today_yyyy),/g" namelist.input
-	sed -i -e "/start_month/s/..,/$(utc_today_mon),/g" namelist.input
-	sed -i -e "/start_day/s/..,/$(utc_today_date),/g" namelist.input
-	sed -i -e "/end_year/s/....,/$(utc_tomorrow_yyyy),/g" namelist.input
-	sed -i -e "/end_month/s/..,/$(utc_tomorrow_mon),/g" namelist.input
-	sed -i -e "/end_day/s/..,/$(utc_tomorrow_date),/g" namelist.input
-	sed -i -e "/end_hour/s/12/00/g" namelist.input
-	sed -i -e "/num_metgrid_levels/s/27/40/" namelist.input
-	./real.exe
+	@$(RM) met_em.d0* namelist.input
+	@ln -s ../../domains/${FLYING_FIELD}/met_em.d0* .
+	@cp ../../domains/${FLYING_FIELD}/namelist.input .
+	@sed -i -e "/start_year/s/....,/$(utc_today_yyyy),/g" namelist.input
+	@sed -i -e "/start_month/s/..,/$(utc_today_mon),/g" namelist.input
+	@sed -i -e "/start_day/s/..,/$(utc_today_date),/g" namelist.input
+	@sed -i -e "/end_year/s/....,/$(utc_tomorrow_yyyy),/g" namelist.input
+	@sed -i -e "/end_month/s/..,/$(utc_tomorrow_mon),/g" namelist.input
+	@sed -i -e "/end_day/s/..,/$(utc_tomorrow_date),/g" namelist.input
+	@sed -i -e "/end_hour/s/12/00/g" namelist.input
+	@sed -i -e "/num_metgrid_levels/s/27/40/" namelist.input
+	./real.exe >real.stdout
 
 clean:
-	$(RM) wrf_done wrfout_d*
-	$(RM) met_em.d0* namelist.input wrfinput_d*
-	$(RM) *~ *.log
+	@$(RM) wrf_done wrfout_d*
+	@$(RM) met_em.d0* namelist.input wrfinput_d* wrfbdy_d01
+	@$(RM) *~ *.log

@@ -5,3 +5,4 @@ namelist.output
 *.log
 *_done
 wrf*_d??
+*.stdout

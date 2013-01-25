@@ -16,8 +16,8 @@ export GMIMAGESIZE=1600
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:dwcrit:wstar:bsratio:sfcshf:zblcl:zblcldif:zblclmask:blcwbase:press1000:press950:press850:press700:press500:bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:rain1:wrf=HGT:wstar_bsratio:bsratio_bsratio:blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:hglider:stars:sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:sounding8:sounding9"
 WRF_RUN = ${BASEDIR}/WRFV3/run
 
-utc_today=$(shell date --utc +%Y%m%d)
-utc_tomorrow=$(shell date --utc --date=tomorrow +%Y%m%d)
+utc_today=$(shell date --utc +%F)
+utc_tomorrow=$(shell date --utc --date=tomorrow +%F)
 WRFOUT_1700Z = wrfout_d02_$(utc_today)_17:00:00
 WRFOUT_1800Z = wrfout_d02_$(utc_today)_18:00:00
 WRFOUT_1900Z = wrfout_d02_$(utc_today)_19:00:00
@@ -29,7 +29,7 @@ WRFOUT_2400Z = wrfout_d02_$(utc_tomorrow)_00:00:00
 
 all: ncl
 
-ncl: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z
+ncl chart: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z
 1700Z: $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1700Z) all
 
@@ -59,11 +59,10 @@ $(WRF_RUN)/wrf_done: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
 	$(MAKE) -C $(WRF_RUN) wrf_done
 
 wps: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
-${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2
+${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: gribfile
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} metgrid_done
 
-grib: ${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2
-${BASEDIR}/grib/nam.t00z.awip3d12.tm00.grib2:
+gribfile:
 	$(MAKE) -C ${BASEDIR}/grib all
 
 clean-grib:

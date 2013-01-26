@@ -9,6 +9,7 @@ all: grib
 
 grib: file_available nam.t00z.awip3d12.tm00.grib2 
 nam.t00z.awip3d12.tm00.grib2: mark_file
+	@$(RM) nam.t00z.awip3d??.tm00.grib2*
 	$(WGET) $(WGET_OPTION) \
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/nam.t00z.awip3d12.tm00.grib2
 	$(WGET) $(WGET_OPTION) \
@@ -26,4 +27,4 @@ file_available:
 	touch --date="`date --utc +%F` 00:00Z" mark_file
 
 clean:
-	$(RM) nam.t00z.awip3d??.tm00.grib2* file_available *~
+	$(RM) nam.t00z.awip3d??.tm00.grib2* mark_file *~

@@ -26,5 +26,5 @@ nam.t00z.awip3d12.tm00.grib2: mark_file
 file_available:
 	touch --date="`date --utc +%F` 00:00Z" mark_file
 
-clean:
-	$(RM) nam.t00z.awip3d??.tm00.grib2* mark_file *~
+clean: file_available
+	$(RM) nam.t00z.awip3d??.tm00.grib2* *~

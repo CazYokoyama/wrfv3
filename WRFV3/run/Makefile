@@ -14,6 +14,7 @@ wrf_done: wrfinput_d02
 
 real: wrfinput_d01 wrfinput_d02
 wrfinput_d01 wrfinput_d02: ../../domains/${FLYING_FIELD}/metgrid_done
+	@$(RM) wrf_done
 	@$(RM) met_em.d0* namelist.input
 	@ln -s ../../domains/${FLYING_FIELD}/met_em.d0* .
 	@cp ../../domains/${FLYING_FIELD}/namelist.input .

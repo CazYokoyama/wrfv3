@@ -43,7 +43,8 @@ SCP_DEST_DIR = /var/www/html/RASP/GM/${flying_field}
 
 all: copy_to_website
 
-${ENV_NCL_OUTDIR}/png_created_$(TIME_ID):
+${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
+	@$(RM) ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 	@$(RM) -r ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >$(TIME_ID).log && \
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)

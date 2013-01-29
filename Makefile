@@ -71,6 +71,9 @@ clean-grib:
 clean-wps:
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean
 
+clean-geogrid:
+	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} clean-geogrid
+
 clean-wrf:
 	$(MAKE) -C $(WRF_RUN) clean
 

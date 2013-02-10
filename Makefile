@@ -9,6 +9,12 @@ export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart
 export PROJECTION=Mercator
 export WRFOUT_DIR=${BASEDIR}/WRFV3/run
 
+export NCARG_DATABASE=/usr/lib64/ncarg/database
+export NCARG_FONTCAPS=/usr/lib64/ncarg/fontcaps
+export NCARG_GRAPHCAPS=/usr/lib64/ncarg/graphcaps
+#export NCARG_LIB=/usr/lib64/ncarg
+#export NCARG_NCARG=/usr/share/ncarg
+
 export NCARG_ROOT=/usr
 export NCL_COMMAND=${NCARG_ROOT}/bin/ncl
 export NCARG_RANGS=/usr/local/lib/ncarg/database/rangs

@@ -9,12 +9,10 @@ export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart
 export PROJECTION=Mercator
 export WRFOUT_DIR=${BASEDIR}/WRFV3/run
 
-export NCARG_DATABASE=/usr/lib64/ncarg/database
-export NCARG_FONTCAPS=/usr/lib64/ncarg/fontcaps
-#export NCARG_GRAPHCAPS=/usr/lib64/ncarg/graphcaps
-
 export NCARG_ROOT=/usr
 export NCL_COMMAND=${NCARG_ROOT}/bin/ncl
+export NCARG_DATABASE=${NCARG_ROOT}/lib64/ncarg/database
+export NCARG_FONTCAPS=${NCARG_ROOT}/lib64/ncarg/fontcaps
 export NCARG_RANGS=/usr/local/lib/ncarg/database/rangs
 export GMIMAGESIZE=1600
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:dwcrit:wstar:bsratio:sfcshf:zblcl:zblcldif:zblclmask:blcwbase:press1000:press950:press850:press700:press500:bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:rain1:wrf=HGT:wstar_bsratio:bsratio_bsratio:blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:hglider:stars:sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:sounding8:sounding9"

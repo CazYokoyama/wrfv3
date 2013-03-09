@@ -64,7 +64,7 @@ wps: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
 ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: grib_dir/nam.t00z.awip3d12.tm00.grib2
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} metgrid_done
 
-grib grib_dir/nam.t00z.awip3d12.tm00.grib2:
+grib grib_dir/nam.t12z.awip3d12.tm00.grib2:
 	$(MAKE) -C ${BASEDIR}/grib_dir all
 
 clean-grib:

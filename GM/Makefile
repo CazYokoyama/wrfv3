@@ -39,7 +39,7 @@ export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
 SCP = scp
 SCP_OPTION = -q
 SCP_DEST_SITE = caztech
-SCP_DEST_DIR = /var/www/html/RASP/GM/${flying_field}
+SCP_DEST_DIR = /var/www/html/RASP/GM/${flying_field}-1200z
 
 all: copy_to_website
 

@@ -55,4 +55,4 @@ copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 	fi
 
 clean:
-	@$(RM) -rf ${ENV_NCL_OUTDIR} 20??-*-00-00.log
+	@$(RM) -rf ${NCL_OUTDIR} 20??-*-00-00.log

@@ -80,7 +80,7 @@ clean-wrf:
 	$(MAKE) -C $(WRF_RUN) clean
 
 clean-chart:
-	$(RM) -r ${NCL_OUTDIR}
+	$(MAKE) -C ${BASEDIR}/GM clean
 
 clean-grib-too: clean clean-grib
 

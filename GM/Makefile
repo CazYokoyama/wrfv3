@@ -30,7 +30,7 @@ localtimeid = $(shell date -d $(FILEDATE) +%Z)
 filehh = $(shell date -u -d $(FILETIME) +%H)
 filemin = $(shell date -u -d $(FILETIME) +%M)
 fcstperiodprt = $(shell expr $(localhh) + 24 - 16)
-ztime = 1600
+ztime = 0000
 export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~(%02d%02dZ)~Z~ %s %s %s %d ~Z75~[%shrFcst@%sz]~Z~" \
 $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localday) $(localmon) $(localyyyy) \
 $(fcstperiodprt) $(ztime))

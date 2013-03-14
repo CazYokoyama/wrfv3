@@ -31,6 +31,8 @@ WRFOUT_2200Z = wrfout_d02_$(utc_today)_22:00:00
 WRFOUT_2300Z = wrfout_d02_$(utc_today)_23:00:00
 WRFOUT_2400Z = wrfout_d02_$(utc_tomorrow)_00:00:00
 
+export base_hh_utc=12
+
 all: ncl
 
 ncl chart: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z

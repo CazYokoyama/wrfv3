@@ -1,7 +1,7 @@
 #utc_today=$(shell date --utc +%Y-%m-%d)
 #utc_tomorrow=$(shell date --utc --date=tomorrow +%Y-%m-%d)
-utc_today=2013-03-09
-utc_tomorrow=2013-03-10
+utc_today=$(shell date --utc --date=yesterday +%Y-%m-%d)
+utc_tomorrow=$(shell date --utc --date=today +%Y-%m-%d)
 
 all: metgrid_done
 

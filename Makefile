@@ -20,8 +20,8 @@ WRF_RUN = ${BASEDIR}/WRFV3/run
 
 #utc_today=$(shell date --utc +%F)
 #utc_tomorrow=$(shell date --utc --date=tomorrow +%F)
-utc_today=2013-03-09
-utc_tomorrow=2013-03-10
+utc_today=$(shell date --utc --date=yesterday +%F)
+utc_tomorrow=$(shell date --utc --date=today +%F)
 WRFOUT_1700Z = wrfout_d02_$(utc_today)_17:00:00
 WRFOUT_1800Z = wrfout_d02_$(utc_today)_18:00:00
 WRFOUT_1900Z = wrfout_d02_$(utc_today)_19:00:00

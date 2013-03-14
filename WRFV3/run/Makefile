@@ -4,12 +4,12 @@
 #utc_tomorrow_yyyy=$(shell date --utc --date=tomorrow +%Y)
 #utc_tomorrow_mon=$(shell date --utc --date=tomorrow +%m)
 #utc_tomorrow_date=$(shell date --utc --date=tomorrow +%d)
-utc_today_yyyy=2013
-utc_today_mon=03
-utc_today_date=09
-utc_tomorrow_yyyy=2013
-utc_tomorrow_mon=03
-utc_tomorrow_date=10
+utc_today_yyyy=$(shell date --utc --date=yesterday +%Y)
+utc_today_mon=$(shell date --utc --date=yesterday +%m)
+utc_today_date=$(shell date --utc --date=yesterday +%d)
+utc_tomorrow_yyyy=$(shell date --utc --date=today +%Y)
+utc_tomorrow_mon=$(shell date --utc --date=today +%m)
+utc_tomorrow_date=$(shell date --utc --date=today +%d)
 
 all: wrf_done
 

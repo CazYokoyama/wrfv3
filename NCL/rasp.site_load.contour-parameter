@@ -21,10 +21,10 @@ if (plot_param .eq. "experimental1") then
   opts_bparam@ContourParameters = (/ 500., 8000., 500. /)
 end if
 if (plot_param .eq. "hwcrit") then
-  opts_bparam@ContourParameters = (/ 500., 8000., 500. /)
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
 end if
 if (plot_param .eq. "dwcrit") then
-  opts_bparam@ContourParameters = (/ 200., 1000., 200. /)
+  opts_bparam@ContourParameters = (/ 100., 1000., 100. /)
 end if
 if (plot_param .eq. "hbl") then
   opts_bparam@ContourParameters = (/ 500., 8000., 500. /)

@@ -29,7 +29,7 @@ localyyyy = $(shell date -d $(FILEDATE) +%Y)
 localtimeid = $(shell date +%Z)
 filehh = $(shell date -u -d $(FILETIME) +%H)
 filemin = $(shell date -u -d $(FILETIME) +%M)
-base_hh_utc = 04
+base_hh_utc = 12
 tmp = $(shell expr $(filehh) + $(base_hh_utc))
 fcstperiodprt = $(shell \
 if [ $(tmp) -lt 17 ]; then \

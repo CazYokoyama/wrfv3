@@ -1,7 +1,10 @@
-#utc_today=$(shell date --utc +%Y-%m-%d)
-#utc_tomorrow=$(shell date --utc --date=tomorrow +%Y-%m-%d)
-utc_today=$(shell date --utc --date=yesterday +%Y-%m-%d)
-utc_tomorrow=$(shell date --utc --date=today +%Y-%m-%d)
+ifeq (${debug},true)
+	utc_today=$(shell date --utc --date=yesterday +%Y-%m-%d)
+	utc_tomorrow=$(shell date --utc --date=today +%Y-%m-%d)
+else
+	utc_today=$(shell date --utc +%Y-%m-%d)
+	utc_tomorrow=$(shell date --utc --date=tomorrow +%Y-%m-%d)
+endif
 
 all: metgrid_done
 
@@ -24,10 +27,10 @@ geo_em.d02.nc:
 	@$(RM) namelist.wps
 
 ungrib: ungrib_done
-ungrib_done: ../../grib_dir/nam.t12z.awip3d00.tm00.grib2 ../domain-wizard/NorthPlains/namelist.wps
+ungrib_done: ../../grib_dir/nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.grib2 ../domain-wizard/NorthPlains/namelist.wps
 	@$(RM) Vtable FILE:*
 	@ln -sf ../../WPS/ungrib/Variable_Tables/Vtable.NAM Vtable
-	@../../WPS/link_grib.csh ../../grib_dir/nam.t12z.awip3d
+	@../../WPS/link_grib.csh ../../grib_dir/nam.t${base_hh_utc}z.awip3d
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	sed -i -e "/start_date/s/....-..-.._..:00:00/$(utc_today)_12:00:00/g" namelist.wps
 	sed -i -e "/end_date/s/....-..-.._00:00:00/$(utc_tomorrow)_00:00:00/g" namelist.wps

@@ -13,7 +13,6 @@ metgrid_done: geo_em.d02.nc ungrib_done
 	@$(RM) met_em.d0?.*:00:00.nc metgrid_done
 	@sed -i -e "/opt_output_from_metgrid_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
 	@sed -i -e "/opt_metgrid_tbl_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
-	sed -i -e "s@/wrfv3/@/wrfv3-1200z/@g" namelist.wps
 	../../WPS/metgrid.exe >metgrid.stdout
 	@grep -q "Successful completion" metgrid.log && touch metgrid_done
 
@@ -22,7 +21,6 @@ geo_em.d02.nc:
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	@sed -i -e "/opt_output_from_geogrid_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
 	@sed -i -e "/opt_geogrid_tbl_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
-	sed -i -e "s@/wrfv3/@/wrfv3-1200z/@g" namelist.wps
 	../../WPS/geogrid.exe >geogrid.stdout
 	@$(RM) namelist.wps
 
@@ -34,7 +32,6 @@ ungrib_done: ../../grib_dir/nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	sed -i -e "/start_date/s/....-..-.._..:00:00/$(utc_today)_12:00:00/g" namelist.wps
 	sed -i -e "/end_date/s/....-..-.._00:00:00/$(utc_tomorrow)_00:00:00/g" namelist.wps
-	sed -i -e "s@/wrfv3/@/wrfv3-1200z/@g" namelist.wps
 	../../WPS/ungrib.exe >ungrib.stdout
 	@grep -q "Successful completion" ungrib.log && touch ungrib_done
 

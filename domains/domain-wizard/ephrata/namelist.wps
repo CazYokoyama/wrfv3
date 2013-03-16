@@ -72,10 +72,10 @@
  dwiz_latlon_space_in_deg =10
  dwiz_latlon_linecolor =-8355712
  dwiz_map_scale_pct =25.0
- dwiz_map_vert_scrollbar_pos =204
- dwiz_map_horiz_scrollbar_pos =387
+ dwiz_map_vert_scrollbar_pos =0
+ dwiz_map_horiz_scrollbar_pos =0
  dwiz_gridpt_dist_km =10.7
- dwiz_mpi_command =null
+ dwiz_mpi_command =
  dwiz_tcvitals =null
  dwiz_bigmap =Y
 /

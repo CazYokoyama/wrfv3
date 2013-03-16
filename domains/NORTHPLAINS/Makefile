@@ -32,7 +32,6 @@ ungrib_done: ../../grib_dir/nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	sed -i -e "/start_date/s/....-..-.._..:00:00/$(utc_today)_12:00:00/g" namelist.wps
 	sed -i -e "/end_date/s/....-..-.._00:00:00/$(utc_tomorrow)_00:00:00/g" namelist.wps
-	sed -i -e "s@/wrfv3/@/wrfv3-1200z/@g" namelist.wps
 	../../WPS/ungrib.exe >ungrib.stdout
 	@grep -q "Successful completion" ungrib.log && touch ungrib_done
 

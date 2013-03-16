@@ -13,7 +13,6 @@ metgrid_done: geo_em.d02.nc ungrib_done
 	@$(RM) met_em.d0?.*:00:00.nc metgrid_done
 	@sed -i -e "/opt_output_from_metgrid_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
 	@sed -i -e "/opt_metgrid_tbl_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
-	sed -i -e "s@/wrfv3/@/wrfv3-1200z/@g" namelist.wps
 	../../WPS/metgrid.exe >metgrid.stdout
 	@grep -q "Successful completion" metgrid.log && touch metgrid_done
 
@@ -22,7 +21,6 @@ geo_em.d02.nc:
 	@cp ../domain-wizard/NorthPlains/namelist.wps .
 	@sed -i -e "/opt_output_from_geogrid_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
 	@sed -i -e "/opt_geogrid_tbl_path/s@domain-wizard/NorthPlains@NORTHPLAINS@g" namelist.wps
-	sed -i -e "s@/wrfv3/@/wrfv3-1200z/@g" namelist.wps
 	../../WPS/geogrid.exe >geogrid.stdout
 	@$(RM) namelist.wps
 

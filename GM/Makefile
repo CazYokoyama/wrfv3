@@ -29,8 +29,7 @@ localyyyy = $(shell date -d $(FILEDATE) +%Y)
 localtimeid = $(shell date +%Z)
 filehh = $(shell date -u -d $(FILETIME) +%H)
 filemin = $(shell date -u -d $(FILETIME) +%M)
-base_hh_utc = 00
-tmp = $(shell expr $(filehh) + $(base_hh_utc))
+tmp = $(shell expr $(filehh) + ${base_hh_utc})
 fcstperiodprt = $(shell \
 if [ $(tmp) -lt 17 ]; then \
 	expr $(tmp) + 24 ; \
@@ -39,13 +38,13 @@ else \
 fi)
 export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~(%02d%02dZ)~Z~ %s %s %s %d ~Z75~[%shrFcst@%s00z]~Z~" \
 $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localday) $(localmon) $(localyyyy) \
-$(fcstperiodprt) $(base_hh_utc))
+$(fcstperiodprt) ${base_hh_utc})
 TIME_ID = $(FILEDATE)_$(shell echo $(FILETIME) | tr ":" "-")
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
 SCP = scp
 SCP_OPTION = -q
 SCP_DEST_SITE = caztech
-SCP_DEST_DIR = /var/www/html/RASP/GM/${flying_field}
+SCP_DEST_DIR = /var/www/html/RASP/GM/${flying_field}-${base_hh_utc}00z
 
 all: copy_to_website
 

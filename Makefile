@@ -18,8 +18,23 @@ export GMIMAGESIZE=1600
 export ENV_NCL_PARAMS="mslpress:sfcwind0:sfcwind:sfcwind2:blwind:bltopwind:dbl:experimental1:sfctemp:zwblmaxmin:blicw:hbl:hwcrit:dwcrit:wstar:bsratio:sfcshf:zblcl:zblcldif:zblclmask:blcwbase:press1000:press950:press850:press700:press500:bltopvariab:wblmaxmin:zwblmaxmin:blwindshear:sfctemp:sfcdewpt:cape:rain1:wrf=HGT:wstar_bsratio:bsratio_bsratio:blcloudpct:sfcsunpct:zsfclcl:zsfclcldif:zsfclclmask:hglider:stars:sounding1:sounding2:sounding3:sounding4:sounding5:sounding6:sounding7:sounding8:sounding9"
 WRF_RUN = ${BASEDIR}/WRFV3/run
 
-utc_today=$(shell date --utc +%F)
-utc_tomorrow=$(shell date --utc --date=tomorrow +%F)
+current_hh = $(shell date --utc +%H)
+ifndef base_hh_utc
+	export base_hh_utc=$(shell printf "%02d" `expr \( \( $(current_hh) - 2 \) / 6 \) \* 6`)
+endif
+export yesterday = $(shell \
+if [ $(current_hh) -le $(base_hh_utc) ]; then \
+	echo true; \
+else \
+	echo false; \
+fi)
+ifeq (${yesterday},true)
+	utc_today=$(shell date --utc --date=yesterday +%F)
+	utc_tomorrow=$(shell date --utc --date=today +%F)
+else
+	utc_today=$(shell date --utc +%F)
+	utc_tomorrow=$(shell date --utc --date=tomorrow +%F)
+endif
 WRFOUT_1700Z = wrfout_d02_$(utc_today)_17:00:00
 WRFOUT_1800Z = wrfout_d02_$(utc_today)_18:00:00
 WRFOUT_1900Z = wrfout_d02_$(utc_today)_19:00:00
@@ -28,6 +43,9 @@ WRFOUT_2100Z = wrfout_d02_$(utc_today)_21:00:00
 WRFOUT_2200Z = wrfout_d02_$(utc_today)_22:00:00
 WRFOUT_2300Z = wrfout_d02_$(utc_today)_23:00:00
 WRFOUT_2400Z = wrfout_d02_$(utc_tomorrow)_00:00:00
+
+export prediction_hours=$(shell printf "%02d" `expr 12 - ${base_hh_utc}`)
+export grib_1200z=nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.grib2
 
 all: ncl
 
@@ -61,10 +79,10 @@ $(WRF_RUN)/wrf_done: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
 	$(MAKE) -C $(WRF_RUN) wrf_done
 
 wps: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done
-${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: grib_dir/nam.t00z.awip3d12.tm00.grib2
+${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done: grib_dir/${grib_1200z}
 	$(MAKE) -C ${BASEDIR}/domains/${FLYING_FIELD} metgrid_done
 
-grib grib_dir/nam.t00z.awip3d12.tm00.grib2:
+grib grib_dir/${grib_1200z}:
 	$(MAKE) -C ${BASEDIR}/grib_dir all
 
 clean-grib:

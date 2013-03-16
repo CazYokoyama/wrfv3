@@ -1,9 +1,18 @@
-utc_today_yyyy=$(shell date --utc +%Y)
-utc_today_mon=$(shell date --utc +%m)
-utc_today_date=$(shell date --utc +%d)
-utc_tomorrow_yyyy=$(shell date --utc --date=tomorrow +%Y)
-utc_tomorrow_mon=$(shell date --utc --date=tomorrow +%m)
-utc_tomorrow_date=$(shell date --utc --date=tomorrow +%d)
+ifeq (${yesterday},true)
+	utc_today_yyyy=$(shell date --utc --date=yesterday +%Y)
+	utc_today_mon=$(shell date --utc --date=yesterday +%m)
+	utc_today_date=$(shell date --utc --date=yesterday +%d)
+	utc_tomorrow_yyyy=$(shell date --utc --date=today +%Y)
+	utc_tomorrow_mon=$(shell date --utc --date=today +%m)
+	utc_tomorrow_date=$(shell date --utc --date=today +%d)
+else
+	utc_today_yyyy=$(shell date --utc +%Y)
+	utc_today_mon=$(shell date --utc +%m)
+	utc_today_date=$(shell date --utc +%d)
+	utc_tomorrow_yyyy=$(shell date --utc --date=tomorrow +%Y)
+	utc_tomorrow_mon=$(shell date --utc --date=tomorrow +%m)
+	utc_tomorrow_date=$(shell date --utc --date=tomorrow +%d)
+endif
 
 all: wrf_done
 

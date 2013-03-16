@@ -1,4 +1,4 @@
-ifeq (${debug},true)
+ifeq (${yesterday},true)
 	utc_today_yyyy=$(shell date --utc --date=yesterday +%Y)
 	utc_today_mon=$(shell date --utc --date=yesterday +%m)
 	utc_today_date=$(shell date --utc --date=yesterday +%d)

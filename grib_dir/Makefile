@@ -3,7 +3,7 @@ WGET_OPTION = -q
 GRIB_FTP_SITE = ftp://ftpprd.ncep.noaa.gov
 GRIB_FTP_DIR = /pub/data/nccf/com/nam/prod
 
-ifeq (${debug},true)
+ifeq (${yesterday},true)
 	utc_today=$(shell date --utc --date=yesterday +%Y%m%d)
 else
 	utc_today=$(shell date --utc +%Y%m%d)

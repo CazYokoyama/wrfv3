@@ -29,12 +29,12 @@ localyyyy = $(shell date -d $(FILEDATE) +%Y)
 localtimeid = $(shell date +%Z)
 filehh = $(shell date -u -d $(FILETIME) +%H)
 filemin = $(shell date -u -d $(FILETIME) +%M)
-tmp = $(shell expr $(filehh) + ${base_hh_utc})
+tmp = $(shell expr $(filehh) - ${base_hh_utc})
 fcstperiodprt = $(shell \
-if [ $(tmp) -lt 17 ]; then \
-	expr $(tmp) + 24 ; \
-else \
+if [ $(tmp) -gt 0 ]; then \
 	echo $(tmp); \
+else \
+	expr $(tmp) + 24; \
 fi)
 export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~(%02d%02dZ)~Z~ %s %s %s %d ~Z75~[%shrFcst@%s00z]~Z~" \
 $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localday) $(localmon) $(localyyyy) \

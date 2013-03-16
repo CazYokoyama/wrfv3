@@ -1,0 +1,11 @@
+met_em.d*.nc
+*.log
+*_done
+FILE:*
+GRIBFILE.*
+chart
+geo_em.d*.nc
+namelist.wps
+Vtable
+*.stdout
+*.stderr

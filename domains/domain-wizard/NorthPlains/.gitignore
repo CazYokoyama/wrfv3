@@ -4,5 +4,4 @@ met_em.d*.nc
 FILE:*
 GRIBFILE.*
 chart
-geo_em.d*.nc
 *.exitCode

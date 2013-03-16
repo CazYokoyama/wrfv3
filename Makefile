@@ -24,6 +24,8 @@ ifeq (${debug},true)
 else
 	utc_today=$(shell date --utc +%F)
 	utc_tomorrow=$(shell date --utc --date=tomorrow +%F)
+	current_hh = $(shell date --utc +%H)
+	export base_hh_utc=$(shell printf "%02d" `expr \( \( $(current_hh) - 2 \) / 6 \) \* 6`)
 endif
 WRFOUT_1700Z = wrfout_d02_$(utc_today)_17:00:00
 WRFOUT_1800Z = wrfout_d02_$(utc_today)_18:00:00
@@ -34,8 +36,6 @@ WRFOUT_2200Z = wrfout_d02_$(utc_today)_22:00:00
 WRFOUT_2300Z = wrfout_d02_$(utc_today)_23:00:00
 WRFOUT_2400Z = wrfout_d02_$(utc_tomorrow)_00:00:00
 
-current_hh = $(shell date --utc +%H)
-export base_hh_utc=$(shell printf "%02d" `expr \( \( $(current_hh) - 2 \) / 6 \) \* 6`)
 export prediction_hours=$(shell printf "%02d" `expr 12 - ${base_hh_utc}`)
 export grib_1200z=nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.grib2
 

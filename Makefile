@@ -1,4 +1,6 @@
-export flying_field=ephrata
+ifndef base_hh_utc
+export flying_field=NorthPlains
+endif
 
 export BASEDIR=$(shell pwd)
 export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1

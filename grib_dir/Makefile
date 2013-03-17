@@ -17,8 +17,6 @@ t21 = $(shell printf "%02d" `expr 21 - ${base_hh_utc}`)
 grib_2100z = nam.t${base_hh_utc}z.awip3d$(t21).tm00.grib2
 t24 = $(shell printf "%02d" `expr 24 - ${base_hh_utc}`)
 grib_2400z = nam.t${base_hh_utc}z.awip3d$(t24).tm00.grib2
-t27 = $(shell printf "%02d" `expr 27 - ${base_hh_utc}`)
-grib_2700z = nam.t${base_hh_utc}z.awip3d$(t27).tm00.grib2
 
 all: grib
 
@@ -35,8 +33,6 @@ ${grib_1200z}: mark_file
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_2100z)
 	$(WGET) $(WGET_OPTION) \
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_2400z)
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_2700z)
 
 file_available:
 	touch --date="`date --utc +%F` 00:00Z" mark_file

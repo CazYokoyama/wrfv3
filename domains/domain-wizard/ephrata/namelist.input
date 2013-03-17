@@ -18,7 +18,7 @@ end_second               = 00,       00,
 interval_seconds         = 21600,
 input_from_file          = .true.,   .true.,
 history_interval         = 180,       60,
-frames_per_outfile       = 1000,     1000,
+frames_per_outfile       = 1,        1,
 restart                  = .false.,
 restart_interval         = 5000,
 io_form_history          = 2,
@@ -29,7 +29,7 @@ debug_level              = 0,
 /
 
 &domains                 
-time_step                = 64,
+time_step                = 60,
 time_step_fract_num      = 0,
 time_step_fract_den      = 1,
 max_dom                  = 2,

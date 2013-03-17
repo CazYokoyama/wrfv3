@@ -1,4 +1,4 @@
-ifndef base_hh_utc
+ifndef flying_field
 	export flying_field=NorthPlains
 endif
 

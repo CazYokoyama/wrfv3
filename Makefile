@@ -1,5 +1,5 @@
 ifndef base_hh_utc
-export flying_field=northplains
+export flying_field=NorthPlains
 endif
 
 export BASEDIR=$(shell pwd)

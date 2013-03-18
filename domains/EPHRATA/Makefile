@@ -24,7 +24,6 @@ geo_em.d02.nc:
 	@sed -i -e "/opt_output_from_metgrid_path/s@domain-wizard/ephrata@EPHRATA@g" namelist.wps
 	@sed -i -e "/opt_metgrid_tbl_path/s@domain-wizard/ephrata@EPHRATA@g" namelist.wps
 	../../WPS/geogrid.exe >geogrid.stdout
-	@$(RM) namelist.wps
 
 ungrib: ungrib_done
 ungrib_done: ../../grib_dir/nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.grib2 ../domain-wizard/ephrata/namelist.wps

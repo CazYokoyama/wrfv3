@@ -22,7 +22,6 @@ all: grib
 
 grib: file_available ${grib_1200z} 
 ${grib_1200z}: mark_file
-	@$(RM) nam.t12z.awip3d??.tm00.grib2*
 	$(WGET) $(WGET_OPTION) \
 		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_1200z}
 	$(WGET) $(WGET_OPTION) \

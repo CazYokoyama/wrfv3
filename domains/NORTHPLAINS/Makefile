@@ -39,7 +39,7 @@ clean-metgrid:
 	@$(RM) met_em.d0?.*:00:00.nc metgrid_done metgrid.stdout metgrid.log
 
 clean-ungrib:
-	@$(RM) FILE:* ungrib_done Vtable GRIBFILE.* namelist.wps ungrib.log ungrib.stderr ungrib.stdout
+	@$(RM) FILE:* ungrib_done Vtable GRIBFILE.* namelist.wps ungrib.log ungrib.stderr ungrib.stdout PFILE:*
 
 clean-geogrid:
 	@$(RM) geo_em.d0?.nc geogrid.stdout geogrid.log

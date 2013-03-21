@@ -22,7 +22,7 @@ WRF_RUN = ${BASEDIR}/WRFV3/run
 
 current_hh = $(shell date --utc +%H)
 ifndef base_hh_utc
-	export base_hh_utc=$(shell printf "%02d" `expr \( \( $(current_hh) - 2 \) / 6 \) \* 6`)
+	export base_hh_utc=$(shell printf "%02d" `expr \( $(current_hh) / 6 \) \* 6`)
 endif
 export yesterday = $(shell \
 if [ $(current_hh) -le $(base_hh_utc) ]; then \

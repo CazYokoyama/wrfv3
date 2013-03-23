@@ -1,5 +1,5 @@
 WGET = /usr/bin/wget
-WGET_OPTION = -q
+WGET_OPTION = --append-output=wget-${base_hh_utc}.log
 GRIB_FTP_SITE = ftp://ftpprd.ncep.noaa.gov
 GRIB_FTP_DIR = /pub/data/nccf/com/nam/prod
 

@@ -58,6 +58,11 @@ copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 	if ping -qc1 $(SCP_DEST_SITE) >/dev/null; then \
 		$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST_SITE):$(SCP_DEST_DIR); \
 	fi
+	ncftpput -u "caztech@newdigitalrodeo.com" -p "caz_T#ch" \
+		-t 120 -r 10 -d ncftpput-$(TIME_ID).log \
+		newdigitalrodeo.com \
+		/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
+		${ENV_NCL_OUTDIR}/*.png
 
 clean:
 	@$(RM) -rf ${NCL_OUTDIR} 20??-*-00-00.log

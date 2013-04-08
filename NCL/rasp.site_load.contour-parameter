@@ -8,78 +8,105 @@
   ;example=fixed_interval:    opts_bparam@ContourParameters = (/ 0.,0., 100. /)
   ;example=automatic_colors:  opts_bparam@ContourParameters = (/ 0., 0., 0. /)
 ;example:  end if
-if (plot_param .eq. "wstar_bsratio") then
-  opts_bparam@ContourParameters = (/ 50., 300., 50. /)
+if (plot_param .eq. "wstar_bsratio") then ; Thermal Updraft Velocity & B/S Ratio
+  opts_bparam@ContourParameters = (/ 50., 600., 50. /)
 end if
-if (plot_param .eq. "wstar") then
-  opts_bparam@ContourParameters = (/ 50., 1000., 50. /)
+if (plot_param .eq. "wstar") then  ; Thermal Updraft Velocity (W)
+  opts_bparam@ContourParameters = (/ 50., 600., 50. /)
 end if
-if (plot_param .eq. "bsratio") then
-  opts_bparam@ContourParameters = (/ 0.2, 2.2, 0.2 /)
+if (plot_param .eq. "bsratio") then  ; Buyoyancy /Shear ratio
+  opts_bparam@ContourParameters = (/ 0.5, 5., 0.5 /)
 end if
-if (plot_param .eq. "experimental1") then
+if (plot_param .eq. "hwcrit") then  ; Ht of Critical Updraft Strength (225fpm)
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
+end if
+if (plot_param .eq. "dwcrit") then  ; Depth if Critical Updraft Strength (AGL Hcrit)
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
+end if
+if (plot_param .eq. "hbl") then  ; BL Top
+  opts_bparam@ContourParameters = (/ 500., 12000., 500. /)
+end if
+if (plot_param .eq. "dbl") then  ; BL Depth
+  opts_bparam@ContourParameters = (/ 500., 12000., 500. /)
+end if
+if (plot_param .eq. "hglider") then  ; Thermalling Height
   opts_bparam@ContourParameters = (/ 500., 8000., 500. /)
 end if
-if (plot_param .eq. "hwcrit") then
+if (plot_param .eq. "bltopvariab") then  ; Thermal Height uncertainty
+  opts_bparam@ContourParameters = (/ 500., 4000., 500. /)
+end if
+if (plot_param .eq. "experimental1") then  ; Ht of Critical Updraft Strength(175fpm)
+  opts_bparam@ContourParameters = (/ 500., 8000., 500. /)
+end if
+if (plot_param .eq. "zwblmaxmin") then  ; MSL Height of maximum Wbl
   opts_bparam@ContourParameters = (/ 1000., 12000., 1000. /)
 end if
-if (plot_param .eq. "dwcrit") then
-  opts_bparam@ContourParameters = (/ 100., 1000., 100. /)
+if (plot_param .eq. "sfcshf") then  ; Sfc heating
+  opts_bparam@ContourParameters = (/ -0., 400., 50. /)
 end if
-if (plot_param .eq. "hbl") then
-  opts_bparam@ContourParameters = (/ 500., 8000., 500. /)
+if (plot_param .eq. "sfcsunpct") then  ; Normalized surface sun
+  opts_bparam@ContourParameters = (/ 0., 110., 10. /)
 end if
-if (plot_param .eq. "dbl") then
-  opts_bparam@ContourParameters = (/ 500., 3000., 500. /)
+if (plot_param .eq. "sfctemp") then  ; Sfc Temperature
+  opts_bparam@ContourParameters = (/ 0., 115., 10. /)
 end if
-if (plot_param .eq. "bltopvariab") then
-  opts_bparam@ContourParameters = (/ 500., 3000., 500. /)
+if (plot_param .eq. "sfcdewpt") then  ; Sfc Dewpoint
+  opts_bparam@ContourParameters = (/ 10., 100., 10. /)
 end if
-if (plot_param .eq. "sfcshf") then
-  opts_bparam@ContourParameters = (/ -30., 130., 20. /)
+if (plot_param .eq. "stars") then  ; Star Rating
+  opts_bparam@ContourParameters = (/ 0.5, 5., 0.5 /)
 end if
-if (plot_param .eq. "sfcsunpct") then
-  opts_bparam@ContourParameters = (/ 0., 100., 10. /)
+if (plot_param .eq. "sfcwind0") then  ; Sfc Wind (2m)
+  opts_bparam@ContourParameters = (/ 0., 35., 2. /)
 end if
-if (plot_param .eq. "sfcwind") then
-  opts_bparam@ContourParameters = (/ 0., 20., 2. /)
+if (plot_param .eq. "sfcwind") then  ; Sfc Wind (10m)
+  opts_bparam@ContourParameters = (/ 0., 35., 2. /)
 end if
-if (plot_param .eq. "blwind") then
-  opts_bparam@ContourParameters = (/ 0., 30., 2. /)
+if (plot_param .eq. "blwind") then  ; BL Avg Wind
+  opts_bparam@ContourParameters = (/ 0., 50., 2. /)
 end if
-if (plot_param .eq. "bltopwind") then
-  opts_bparam@ContourParameters = (/ 0., 30., 2. /)
+if (plot_param .eq. "bltopwind") then  ; Wind at BL Top
+  opts_bparam@ContourParameters = (/ 0., 50., 2. /)
 end if
-if (plot_param .eq. "blwindshear") then
-  opts_bparam@ContourParameters = (/ 2., 30., 2. /)
+if (plot_param .eq. "blwindshear") then  ; BL Wind Shear
+  opts_bparam@ContourParameters = (/ 2., 32., 2. /)
 end if
-if (plot_param .eq. "wblmaxmin") then
-  opts_bparam@ContourParameters = (/ -50., 50., 10. /)
+if (plot_param .eq. "wblmaxmin") then  ; BL Max UP/Down (Convergence)
+  opts_bparam@ContourParameters = (/ -300., 300., 50. /)
 end if
-if (plot_param .eq. "zsfclcldif") then
-  opts_bparam@ContourParameters = (/ -2000., 3000., 1000. /)
+if (plot_param .eq. "zsfclcldif") then  ; Cu Potential
+  opts_bparam@ContourParameters = (/ -2000., 3000., 500. /)
 end if
-if (plot_param .eq. "zsfclcl") then
-  opts_bparam@ContourParameters = (/ 1000., 7000., 500. /)
+if (plot_param .eq. "zsfclcl") then  ; Cu Cloudbase (Sfc Lcl) MSL
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
 end if
-if (plot_param .eq. "zsfclclmask") then
-  opts_bparam@ContourParameters = (/ 1000., 7000., 1000. /)
+if (plot_param .eq. "zsfclclmask") then  ; Cu Cloudbase where CuPotential > 0
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
 end if
-if (plot_param .eq. "zblcl") then
-  opts_bparam@ContourParameters = (/ 1000., 15000., 2000. /)
+if (plot_param .eq. "zblcldif") then  ; OD Potential
+  opts_bparam@ContourParameters = (/ -2000., 4000., 500. /)
 end if
-if (plot_param .eq. "zblclmask") then
-  opts_bparam@ContourParameters = (/ 1000., 7000., 1000. /)
+if (plot_param .eq. "zblcl") then  ; OD Cloubase (BL CL) MSL
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
 end if
-if (plot_param .eq. "blcloudpct") then
-  opts_bparam@ContourParameters = (/ 20., 100., 20. /)
+if (plot_param .eq. "zblclmask") then  ; OD Cloudbase where ODPotential > 0
+  opts_bparam@ContourParameters = (/ 1000., 8000., 1000. /)
 end if
-if (plot_param .eq. "sfcdewpt") then
-  opts_bparam@ContourParameters = (/ 10., 70., 10. /)
+;if (plot_param .eq. "blcwbase") then  ; BL CLD Base if Clouwater Predicted
+;  opts_bparam@ContourParameters = (/ 20., 100., 20. /)
+;end if
+if (plot_param .eq. "blcloudpct") then  ; BL Cloud Cover
+  opts_bparam@ContourParameters = (/ 10., 100., 10. /)
 end if
-if (plot_param .eq. "cape") then
+;if (plot_param .eq. "rain1") then  ; Rain
+;  opts_bparam@ContourParameters = (/ 20., 100., 20. /)
+;end if
+if (plot_param .eq. "cape") then  ; CAPE
   opts_bparam@ContourParameters = (/ 50., 400., 50. /)
 end if
+;if (plot_param .eq. "blicw") then  ; BL Integrated Cloudwater
+;  opts_bparam@ContourParameters = (/ 20., 100., 20. /)
+;end if
 if (plot_param .eq. "press850") then
   opts_bparam@ContourParameters = (/ -40., 100., 20. /)
 end if

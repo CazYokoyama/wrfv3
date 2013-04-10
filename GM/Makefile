@@ -55,9 +55,8 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
 copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	ncftpput -u "caztech@newdigitalrodeo.com" -p "caz_T#ch" \
+	ncftpput -f ~caz/.1202.us \
 		-t 120 -r 10 -d ncftpput-$(TIME_ID).log \
-		newdigitalrodeo.com \
 		/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
 		${ENV_NCL_OUTDIR}/*.png
 

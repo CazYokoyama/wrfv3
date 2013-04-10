@@ -3,7 +3,7 @@ ifndef flying_field
 endif
 
 export BASEDIR=$(shell pwd)
-export LD_LIBRARY_PATH=/usr/local/lib:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
+export LD_LIBRARY_PATH=/opt/intel/lib/intel64:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN/CL1M1-2M1
 export GETVAR=DRJACK
 export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
 export ENV_NCL_REGIONNAME=${FLYING_FIELD}

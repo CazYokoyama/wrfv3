@@ -35,6 +35,7 @@ wrfinput_d01 wrfinput_d02: ../../domains/${FLYING_FIELD}/metgrid_done
 	@sed -i -e "/end_day/s/..,/$(utc_tomorrow_date),/g" namelist.input
 	@sed -i -e "/end_hour/s/12/00/g" namelist.input
 	@sed -i -e "/num_metgrid_levels/s/27/40/" namelist.input
+	ulimit -s unlimited; \
 	./real.exe >real.stdout
 
 clean:

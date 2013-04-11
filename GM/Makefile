@@ -41,10 +41,6 @@ $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localda
 $(fcstperiodprt) ${base_hh_utc})
 TIME_ID = $(FILEDATE)_$(shell echo $(FILETIME) | tr ":" "-")
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
-SCP = scp
-SCP_OPTION = -q
-SCP_DEST_SITE = caztech
-SCP_DEST_DIR = /var/www/html/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z
 
 all: copy_to_website
 
@@ -54,11 +50,17 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >$(TIME_ID).log && \
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
-copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	ncftpput -f ~caz/.1202.us \
-		-t 120 -r 10 -d ncftpput-$(TIME_ID).log \
+copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID) wait_for_no_ftp
+	for n in {1..10}; do \
+		if ncftpput -f ~caz/.1202.us \
+		-t 30 -Vz -d ncftpput-$(TIME_ID).log \
 		/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
-		${ENV_NCL_OUTDIR}/*.png
+		${ENV_NCL_OUTDIR}/*.png; then break; fi;\
+		sleep ${n};\
+	done
+
+wait_for_no_ftp:
+	while [ "`pidof ncftpput`" != "" ]; do sleep 1; done
 
 clean:
 	@$(RM) -rf ${NCL_OUTDIR} 20??-*-00-00.log

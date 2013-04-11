@@ -53,28 +53,28 @@ all: ncl
 
 ncl chart: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z
 1700Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1700Z) all
+	nice -4 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1700Z) all
 
 1800Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1800Z) all
+	nice -3 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1800Z) all
 
 1900Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1900Z) all
+	nice -2 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_1900Z) all
 
 2000Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2000Z) all
+	nice -1 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2000Z) all
 
 2100Z: $(WRF_RUN)/wrf_done
 	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2100Z) all
 
 2200Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2200Z) all
+	nice -1 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2200Z) all
 
 2300Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2300Z) all
+	nice -2 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2300Z) all
 
 2400Z: $(WRF_RUN)/wrf_done
-	$(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all
+	nice -3 $(MAKE) -C GM WRFOUT_NAME=$(WRFOUT_2400Z) all
 
 wrf: $(WRF_RUN)/wrf_done
 $(WRF_RUN)/wrf_done: ${BASEDIR}/domains/${FLYING_FIELD}/metgrid_done

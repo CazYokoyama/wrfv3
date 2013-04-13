@@ -53,7 +53,7 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID) wait_for_no_ftp
 	for n in {1..10}; do \
 		if ncftpput -f ~caz/.1202.us \
-		-t 30 -Vz -d ncftpput-$(TIME_ID).log \
+		-t 30 -V -d ncftpput-$(TIME_ID).log \
 		/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
 		${ENV_NCL_OUTDIR}/*.png; then break; fi;\
 		sleep ${n};\

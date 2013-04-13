@@ -50,17 +50,19 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >$(TIME_ID).log && \
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
-copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID) wait_for_no_ftp
+copy_to_website: wait_for_no_ftp
 	for n in {1..10}; do \
 		if ncftpput -f ~caz/.1202.us \
-		-t 30 -V -d ncftpput-$(TIME_ID).log \
-		/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
-		${ENV_NCL_OUTDIR}/*.png; then break; fi;\
-		sleep ${n};\
+		  -t 30 -V -d ncftpput-$(TIME_ID).log \
+		  /RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
+		  ${ENV_NCL_OUTDIR}/*.png; then \
+			break;\
+		fi;\
+		sleep $${n};\
 	done
 
-wait_for_no_ftp:
-	while [ "`pidof ncftpput`" != "" ]; do sleep 1; done
+wait_for_no_ftp: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
+	while [ "`pidof ncftpput`" != "" ]; do sleep $(localhh); done
 
 clean:
 	@$(RM) -rf ${NCL_OUTDIR} 20??-*-00-00.log

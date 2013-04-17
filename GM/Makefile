@@ -40,6 +40,7 @@ export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~(%02d%02dZ)~Z~ %s %s %s
 $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localday) $(localmon) $(localyyyy) \
 $(fcstperiodprt) ${base_hh_utc})
 TIME_ID = $(FILEDATE)_$(shell echo $(FILETIME) | tr ":" "-")
+export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart/${flying_field}-${base_hh_utc}00z
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
 
 all: copy_to_website
@@ -63,4 +64,4 @@ copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 	done
 
 clean:
-	@$(RM) -rf ${NCL_OUTDIR} 20??-*-00-00.log
+	@$(RM) -rf ${NCL_OUTDIR}/*/* 20??-*-00-00.log

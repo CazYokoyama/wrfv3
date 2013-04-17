@@ -7,7 +7,6 @@ export LD_LIBRARY_PATH=/opt/intel/lib/intel64:${BASEDIR}/GM/LIB_NCL_JACK_FORTRAN
 export GETVAR=DRJACK
 export FLYING_FIELD=$(shell echo ${flying_field} | tr [a-z] [A-Z])
 export ENV_NCL_REGIONNAME=${FLYING_FIELD}
-export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart
 export PROJECTION=Mercator
 export WRFOUT_DIR=${BASEDIR}/WRFV3/run
 

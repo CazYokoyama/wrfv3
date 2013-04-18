@@ -52,7 +52,7 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
 copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	for n in {1..10}; do \
+	for n in {1..100}; do \
 		while [ "`pidof ncftpput`" != "" ]; do sleep $(localhh); done;\
 		if ncftpput -f ~caz/.1202.us \
 		  -t 60 -V -d ncftpput-$(TIME_ID).log \

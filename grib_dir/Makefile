@@ -22,16 +22,41 @@ all: grib
 
 grib: file_available ${grib_1200z} 
 ${grib_1200z}: mark_file
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_1200z}
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_1500z)
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_1800z)
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_2100z)
-	$(WGET) $(WGET_OPTION) \
-		$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/$(grib_2400z)
+	for n in {1..50}; do \
+		if $(WGET) $(WGET_OPTION) \
+			$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_1200z}; then \
+			break;\
+		fi;\
+		sleep $${n};\
+	done
+	for n in {1..50}; do \
+		if $(WGET) $(WGET_OPTION) \
+			$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_1500z}; then \
+			break;\
+		fi;\
+		sleep $${n};\
+	done
+	for n in {1..50}; do \
+		if $(WGET) $(WGET_OPTION) \
+			$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_1800z}; then \
+			break;\
+		fi;\
+		sleep $${n};\
+	done
+	for n in {1..50}; do \
+		if $(WGET) $(WGET_OPTION) \
+			$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_2100z}; then \
+			break;\
+		fi;\
+		sleep $${n};\
+	done
+	for n in {1..50}; do \
+		if $(WGET) $(WGET_OPTION) \
+			$(GRIB_FTP_SITE)$(GRIB_FTP_DIR)/nam.$(utc_today)/${grib_2400z}; then \
+			break;\
+		fi;\
+		sleep $${n};\
+	done
 
 file_available:
 	touch --date="`date --utc +%F` 00:00Z" mark_file

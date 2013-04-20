@@ -41,7 +41,7 @@ $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localda
 $(fcstperiodprt) ${base_hh_utc})
 TIME_ID = $(FILEDATE)_$(shell echo $(FILETIME) | tr ":" "-")
 export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart/${flying_field}-${base_hh_utc}00z
-export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
+export ENV_NCL_OUTDIR=${NCL_OUTDIR}
 
 all: copy_to_website
 
@@ -64,4 +64,4 @@ copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 	done
 
 clean:
-	@$(RM) -rf ${NCL_OUTDIR}/*/* 20??-*-00-00.log
+	@$(RM) -f ${NCL_OUTDIR}/* 20??-*-00-00.log

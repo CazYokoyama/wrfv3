@@ -43,7 +43,7 @@ TIME_ID = $(FILEDATE)_$(shell echo $(FILETIME) | tr ":" "-")
 export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart/${flying_field}-${base_hh_utc}00z
 export ENV_NCL_OUTDIR=${NCL_OUTDIR}
 
-all: copy_to_website
+all: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
 ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	@$(RM) ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
@@ -51,9 +51,8 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >$(TIME_ID).log && \
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
-copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
+copy_to_website:
 	for n in {1..100}; do \
-		while [ "`pidof ncftpput`" != "" ]; do sleep $(localhh); done;\
 		if ncftpput -f ~caz/.1202.us \
 		  -t 60 -V -d ncftpput-$(TIME_ID).log \
 		  /RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \

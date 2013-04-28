@@ -48,7 +48,10 @@ WRFOUT_2400Z = wrfout_d02_$(utc_tomorrow)_00:00:00
 export prediction_hours=$(shell printf "%02d" `expr 12 - ${base_hh_utc}`)
 export grib_1200z=nam.t${base_hh_utc}z.awip3d${prediction_hours}.tm00.grib2
 
-all: ncl
+all: copy_to_website
+
+copy_to_website: ncl
+	$(MAKE) -C GM copy_to_website
 
 ncl chart: 1700Z 1800Z 1900Z 2000Z 2100Z 2200Z 2300Z 2400Z
 1700Z: $(WRF_RUN)/wrf_done

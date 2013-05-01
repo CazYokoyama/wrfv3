@@ -63,4 +63,4 @@ copy_to_website:
 	done
 
 clean:
-	@$(RM) -f ${NCL_OUTDIR}/* 20??-*-00-00.log
+	@$(RM) -f ${NCL_OUTDIR}/* 20??-*-00-00.log *~ ncftpput-*.log

@@ -51,16 +51,5 @@ ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >$(TIME_ID).log && \
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
-copy_to_website:
-	for n in {1..100}; do \
-		if ncftpput -f ~caz/.1202.us \
-		  -t 60 -V -d ncftpput-$(TIME_ID).log \
-		  /RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z \
-		  ${ENV_NCL_OUTDIR}/*.png; then \
-			break;\
-		fi;\
-		sleep $${n};\
-	done
-
 clean:
 	@$(RM) -f ${NCL_OUTDIR}/* 20??-*-00-00.log *~ ncftpput-*.log ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)

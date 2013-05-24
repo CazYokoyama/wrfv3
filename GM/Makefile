@@ -40,24 +40,16 @@ export ENV_NCL_ID=$(shell printf "Valid %02d%02d %s ~Z75~(%02d%02dZ)~Z~ %s %s %s
 $(localhh) $(localmin) $(localtimeid) $(filehh) $(filemin) $(localdow) $(localday) $(localmon) $(localyyyy) \
 $(fcstperiodprt) ${base_hh_utc})
 TIME_ID = $(FILEDATE)_$(shell echo $(FILETIME) | tr ":" "-")
-export ENV_NCL_OUTDIR=${NCL_OUTDIR}/$(TIME_ID)
-SCP = scp
-SCP_OPTION = -q
-SCP_DEST_SITE = caztech
-SCP_DEST_DIR = /var/www/html/RASP/${flying_field}/chart/${flying_field}-${base_hh_utc}00z
+export NCL_OUTDIR=${BASEDIR}/domains/${FLYING_FIELD}/chart/${flying_field}-${base_hh_utc}00z
+export ENV_NCL_OUTDIR=${NCL_OUTDIR}
 
-all: copy_to_website
+all: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
 ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID): ${WRFOUT_DIR}/wrf_done
 	@$(RM) ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	@$(RM) -r ${ENV_NCL_OUTDIR}; mkdir -p ${ENV_NCL_OUTDIR}
+	@$(RM) ${ENV_NCL_OUTDIR}/*.png
 	${NCL_COMMAND} -n -p ${BASEDIR}/GM/wrf2gm.ncl 2>&1 >$(TIME_ID).log && \
 	touch ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
 
-copy_to_website: ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)
-	if ping -qc1 $(SCP_DEST_SITE) >/dev/null; then \
-		$(SCP) $(SCP_OPTION) ${ENV_NCL_OUTDIR}/*.png $(SCP_DEST_SITE):$(SCP_DEST_DIR); \
-	fi
-
 clean:
-	@$(RM) -rf ${NCL_OUTDIR} 20??-*-00-00.log
+	@$(RM) -f ${NCL_OUTDIR}/* 20??-*-00-00.log *~ ncftpput-*.log ${ENV_NCL_OUTDIR}/png_created_$(TIME_ID)

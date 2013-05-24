@@ -3,10 +3,10 @@ met_em.d*.nc
 *_done
 FILE:*
 GRIBFILE.*
-chart
 geo_em.d*.nc
 namelist.wps
 Vtable
 *.stdout
 *.stderr
 PFILE:*
+chart

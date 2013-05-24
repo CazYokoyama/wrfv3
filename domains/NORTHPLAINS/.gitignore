@@ -9,3 +9,4 @@ Vtable
 *.stdout
 *.stderr
 PFILE:*
+chart
